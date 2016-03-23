@@ -6,10 +6,27 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    FontFamily="Comic Sans MS"
     Width="800"
     Height="600">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        
+    <Grid Background="WhiteSmoke">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Column="1" Grid.Row="1" Text="Rookie" HorizontalAlignment="Center" FontSize="64" Margin="0,0,0,60"/>
+        <StackPanel Grid.Row="2" HorizontalAlignment="Center" Grid.Column="1">
+            <Button x:Name="PlayButton" Content="Play Game" Margin="10" Width="200" FontSize="24" Click="PlayButton_Click"/>
+            <Button x:Name="OptionsButton" Content="Options" Width="200" FontSize="24" Margin="10"/>
+            <Button x:Name="QuitButton" Content="Quit" Width="200" FontSize="24" Margin="10"/>
+        </StackPanel>
     </Grid>
 </Page>
