@@ -24,6 +24,6 @@
         <TextBlock x:Name="Right" Text="Right" TextAlignment="Right" HorizontalAlignment="Right" Grid.Column="2"/>
         <Button x:Name="Button" Content="Button" HorizontalAlignment="Right" Grid.Column="2" VerticalAlignment="Top" Height="23" Padding="6,-3,6,0" Margin="0,3,0,0" Click="Button_Click"/>
         <ProgressBar x:Name="ProgressBar" Width="100" Grid.Column="2" VerticalAlignment="Top" Height="19" Padding="0,3,0,0" Margin="0,5,0,0"/>
-        
+
     </Grid>
 </UserControl>

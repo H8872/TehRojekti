@@ -40,11 +40,14 @@ namespace tehRojekti.SideBar
             Middle.Text = MiddleContent;
             Right.Text = RightContent;
 
-            if(MiddleContent != "")
+            if (MiddleContent != "")
             {
-                SetValue(Canvas.TopProperty, LocationY - 7);
+                SetValue(Canvas.TopProperty, LocationY);
             }
-            else SetValue(Canvas.TopProperty, LocationY);
+            else
+            {
+                SetValue(Canvas.TopProperty, LocationY);
+            }
         }
     }
 }

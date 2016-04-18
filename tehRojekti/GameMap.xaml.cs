@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Navigation;
 using tehRojekti.SideBar;
 using tehRojekti.Class;
 using System.Diagnostics;
+using System.Collections.ObjectModel;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -29,17 +30,17 @@ namespace tehRojekti
 
         DispatcherTimer timer = new DispatcherTimer();
 
-        List<InfoLine> currentInfo = new List<InfoLine>();
-        List<InfoLine> HomeInfo = new List<InfoLine>();
-        List<InfoLine> YardInfo = new List<InfoLine>();
-        List<InfoLine> WorkshopInfo = new List<InfoLine>();
+        ObservableCollection<InfoLine> currentInfo = new ObservableCollection<InfoLine>();
+        ObservableCollection<InfoLine> HomeInfo = new ObservableCollection<InfoLine>();
+        ObservableCollection<InfoLine> YardInfo = new ObservableCollection<InfoLine>();
+        ObservableCollection<InfoLine> WorkshopInfo = new ObservableCollection<InfoLine>();
 
-        List<InfoLine> resourceList = new List<InfoLine>();
+        ObservableCollection<InfoLine> resourceList = new ObservableCollection<InfoLine>();
 
-        List<BuildLine> currentBuild = new List<BuildLine>();
-        List<BuildLine> HomeBuild = new List<BuildLine>();
-        List<BuildLine> YardBuild = new List<BuildLine>();
-        List<BuildLine> WorkshopBuild = new List<BuildLine>();
+        ObservableCollection<BuildLine> currentBuild = new ObservableCollection<BuildLine>();
+        ObservableCollection<BuildLine> HomeBuild = new ObservableCollection<BuildLine>();
+        ObservableCollection<BuildLine> YardBuild = new ObservableCollection<BuildLine>();
+        ObservableCollection<BuildLine> WorkshopBuild = new ObservableCollection<BuildLine>();
 
         ResourcesClass allResources = new ResourcesClass();
         ResourcesClass homeResources = new ResourcesClass();
@@ -48,9 +49,11 @@ namespace tehRojekti
 
         private bool currentType; //True: Info / False: Build
 
+        private int buildingYard = 0;
         private int yardReqWood = 5;
         private int yardReqStone = 5;
-        private int buildInfo;
+        private int buildState;
+        private int buildingNow;
 
         InfoLine resourcesTitle = new InfoLine {};
         InfoLine wood = new InfoLine {};
@@ -66,8 +69,9 @@ namespace tehRojekti
 
             //Initializing resources
             InitializeResources();
-            
+
             //Initializing sidebar stuff
+            (App.Current as App).BuildOrder = 0;
             InitializeInfo();
             InitializeBuild();
 
@@ -85,7 +89,8 @@ namespace tehRojekti
 
         private void Timer_Tick(object sender, object e)
         {
-            (App.Current as App).Number = buildInfo;
+            buildState = (App.Current as App).BuildState;
+            buildingNow = (App.Current as App).BuildingNow;
 
             if (allResources.Wood >= yardReqWood && allResources.Stone >= yardReqStone)
             {
@@ -105,17 +110,20 @@ namespace tehRojekti
                 buildYard.RightVisible = true;
                 buildYard.ButtonVisible = false;
             }
-            if(buildInfo == 1)
+            if(buildState == 1 && buildingNow == 0)
             {
                 allResources.Wood -= 5;
                 allResources.Stone -= 5;
+                buildingYard = 1;
             }
-            else if(buildInfo == 2)
+            else if(buildState == 2 && buildingYard == 1)
             {
                 allResources = AddResources(allResources, yardResources);
+                
+                yardGrid.Visibility = Visibility.Visible;
             }
 
-            (App.Current as App).Number = 0;
+            (App.Current as App).BuildState = 0;
         }
 
         ResourcesClass AddResources(ResourcesClass a, ResourcesClass b)
@@ -131,6 +139,7 @@ namespace tehRojekti
 
         private void InitializeInfo()
         {
+            resourceList.Clear();
             //initializing InfoLines for resources
             resourcesTitle = new InfoLine { MiddleContent = "Resources" };
             wood = new InfoLine { LeftContent = "Wood", RightContent = allResources.Wood.ToString() };
@@ -143,6 +152,7 @@ namespace tehRojekti
             resourceList.Add(stone);
 
             //Adding resourcesList to HomeInfo
+            HomeInfo.Clear();
             InfoLine homeTitle = new InfoLine { MiddleContent = "Home" };
             HomeInfo.Add(homeTitle);
             foreach (InfoLine line in resourceList)
@@ -154,6 +164,8 @@ namespace tehRojekti
 
         private void InitializeBuild()
         {
+            HomeBuild.Clear();
+
             buildYard = new BuildLine { LeftContent = "Yard", ButtonContent = "[5w , 5s]" , RightContent = "[5w , 5s]" , ProgressSpeed = 10};
 
             BuildLine homeTitle = new BuildLine { MiddleContent = "Home" };
@@ -226,7 +238,7 @@ namespace tehRojekti
             SideCanvas.Children.Clear();
             linePos = 0;
             //Adding current info to canvas, and updating them
-            if (type)
+            if (type) // True = Info / False = Build
             {
                 foreach (InfoLine line in currentInfo)
                 {
@@ -240,7 +252,14 @@ namespace tehRojekti
             {
                 foreach (BuildLine line in currentBuild)
                 {
-                    line.LocationY = 27 * linePos;
+                    if(line.MiddleContent == "")
+                    {
+                        line.LocationY = 27 * linePos;
+                    }
+                    else
+                    {
+                        line.LocationY = 20 * linePos;
+                    }
                     line.UpdateInfo();
                     SideCanvas.Children.Add(line);
                     linePos++;
@@ -251,12 +270,14 @@ namespace tehRojekti
         private void BuildButton_Click(object sender, RoutedEventArgs e)
         {
             currentType = false;
+            InitializeBuild();
             UpdateCanvas(currentType);
         }
 
         private void InfoButton_Click(object sender, RoutedEventArgs e)
         {
             currentType = true;
+            InitializeInfo();
             UpdateCanvas(currentType);
         }
     }

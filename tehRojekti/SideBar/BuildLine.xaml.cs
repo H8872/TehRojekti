@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -28,6 +29,7 @@ namespace tehRojekti.SideBar
         public bool ProgressBarVisible { get; set; }
         public double Progress { get; set; }
         public double ProgressSpeed { get; set; }
+        public int BuildOrder { get; set; }
 
         public int LocationY { get; set; }
 
@@ -46,6 +48,8 @@ namespace tehRojekti.SideBar
             ProgressBarVisible = false;
             ProgressSpeed = 0;
             SetValue(ProgressBar.MaximumProperty, 100);
+            BuildOrder = (App.Current as App).BuildOrder;
+            (App.Current as App).BuildOrder++;
 
             timer.Interval = new TimeSpan(0, 0, 1);
             timer.Tick += Timer_Tick;
@@ -66,7 +70,7 @@ namespace tehRojekti.SideBar
 
             if (MiddleContent != "")
             {
-                SetValue(Canvas.TopProperty, LocationY - 7);
+                SetValue(Canvas.TopProperty, LocationY);
                 ProgressBar.Visibility = Visibility.Collapsed;
                 Button.Visibility = Visibility.Collapsed;
                 Left.Visibility = Visibility.Collapsed;
@@ -114,15 +118,16 @@ namespace tehRojekti.SideBar
                 timer.Stop();
                 ProgressBar.Visibility = Visibility.Collapsed;
                 RightContent = "Completed";
+                Right.Text = "Completed";
                 Right.Visibility = Visibility.Visible;
-                (App.Current as App).Number = 2;
+                (App.Current as App).BuildState = 2;
             }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             timer.Start();
-            (App.Current as App).Number = 1;
+            (App.Current as App).BuildState = 1;
             Button.Visibility = Visibility.Collapsed;
             ProgressBar.Visibility = Visibility.Visible;
         }

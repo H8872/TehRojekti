@@ -61,8 +61,8 @@
                     </Grid>
                 </Grid>
                 <Grid BorderBrush="Black" BorderThickness="2" CornerRadius="2" Margin="3" x:Name="yardGrid" Tapped="yardGrid_Tapped">
-                    <TextBlock Text="Yard" Margin="2,0,0,0"/>
-                    <TextBlock x:Name="yardTextBlock" Text="0" TextAlignment="Right" Margin="0,0,2,0"/>
+                    <TextBlock Text="Yard" Margin="2,0,0,0" Visibility="Collapsed"/>
+                    <TextBlock x:Name="yardTextBlock" Text="0" TextAlignment="Right" Margin="0,0,2,0" Visibility="Collapsed"/>
                     <Grid x:Name="yardProgressGrid" HorizontalAlignment="Right" Visibility="Collapsed">
                         <ProgressBar HorizontalAlignment="Right" Height="26" Width="65" BorderBrush="Gray" Foreground="Gray" BorderThickness="2" Value="{Binding Text, ElementName=homeProgress}"/>
                         <TextBlock x:Name="yardProgress" Text="0" HorizontalAlignment="Center"/>
