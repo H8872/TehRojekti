@@ -1,0 +1,99 @@
+﻿<Page
+    x:Class="tehRojekti.GameMap"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:tehRojekti"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    FontSize="24"
+    FontFamily="Comic Sans MS"
+    Width="1000"
+    Height="800">
+
+    <Grid Background="WhiteSmoke">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="350"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Rectangle Grid.Column="1" Fill="DarkRed" HorizontalAlignment="Left" Height="800" Stroke="Black" VerticalAlignment="Top" Width="5"/>
+        <Grid Grid.Column="0" HorizontalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="26"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="1">
+                <TextBlock Text="Rookie" HorizontalAlignment="Center" FontSize="40"/>
+                <StackPanel Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Center" Orientation="Horizontal">
+                    <Button x:Name="MenuButton" Content="Menu" Height="40" Margin="2" Click="MenuButton_Click"/>
+                    <Button x:Name="BuildButton" Content="Build" Height="40" Margin="2" Click="BuildButton_Click"/>
+                    <Button x:Name="InfoButton" Content="Info" Height="40" Margin="2" Click="InfoButton_Click"/>
+                    
+                </StackPanel>
+            </StackPanel>
+            
+            <Canvas x:Name="SideCanvas" Grid.Row="4" HorizontalAlignment="Center" Width="275"/>
+            
+        </Grid>
+        
+        <Grid Grid.Column="2" Margin="15" Grid.ColumnSpan="2">
+            
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <StackPanel Width="200">
+                <Grid BorderBrush="Black" BorderThickness="2" CornerRadius="2" Margin="3" x:Name="homeGrid" Tapped="homeGrid_Tapped">
+                    <TextBlock Text="Home" Margin="2,0,0,0"/>
+                    <TextBlock x:Name="homeTextBlock" Text="0" TextAlignment="Right" Margin="0,0,2,0"/>
+                    <Grid x:Name="homeProgressGrid" HorizontalAlignment="Right" Visibility="Collapsed">
+                        <ProgressBar HorizontalAlignment="Right" Height="26" Width="65" BorderBrush="Gray" Foreground="Gray" BorderThickness="2" Value="{Binding Text, ElementName=homeProgress}"/>
+                        <TextBlock x:Name="homeProgress" Text="0" HorizontalAlignment="Center"/>
+                    </Grid>
+                </Grid>
+                <Grid BorderBrush="Black" BorderThickness="2" CornerRadius="2" Margin="3" x:Name="yardGrid" Tapped="yardGrid_Tapped">
+                    <TextBlock Text="Yard" Margin="2,0,0,0"/>
+                    <TextBlock x:Name="yardTextBlock" Text="0" TextAlignment="Right" Margin="0,0,2,0"/>
+                    <Grid x:Name="yardProgressGrid" HorizontalAlignment="Right" Visibility="Collapsed">
+                        <ProgressBar HorizontalAlignment="Right" Height="26" Width="65" BorderBrush="Gray" Foreground="Gray" BorderThickness="2" Value="{Binding Text, ElementName=homeProgress}"/>
+                        <TextBlock x:Name="yardProgress" Text="0" HorizontalAlignment="Center"/>
+                    </Grid>
+                </Grid>
+                <Grid BorderBrush="Black" BorderThickness="2" CornerRadius="2" Margin="3" x:Name="workGrid">
+                    <TextBlock Text="Workshop" Margin="2,0,0,0"/>
+                    <TextBlock x:Name="workTextBlock" Text="0" TextAlignment="Right" Margin="0,0,2,0"/>
+                    <Grid x:Name="workProgressGrid" HorizontalAlignment="Right" Visibility="Collapsed">
+                        <ProgressBar HorizontalAlignment="Right" Height="26" Width="65" BorderBrush="Gray" Foreground="Gray" BorderThickness="2" Value="{Binding Text, ElementName=homeProgress}"/>
+                        <TextBlock x:Name="workProgress" Text="0" HorizontalAlignment="Center"/>
+                    </Grid>
+                </Grid>
+                <Grid BorderBrush="Black" BorderThickness="2" CornerRadius="2" Margin="3" x:Name="aGrid">
+                    <TextBlock Text="a" Margin="2,0,0,0"/>
+                    <TextBlock x:Name="aTextBlock" Text="0" TextAlignment="Right" Margin="0,0,2,0"/>
+                    <Grid x:Name="aProgressGrid" HorizontalAlignment="Right" Visibility="Collapsed">
+                        <ProgressBar HorizontalAlignment="Right" Height="26" Width="65" BorderBrush="Gray" Foreground="Gray" BorderThickness="2" Value="{Binding Text, ElementName=homeProgress}"/>
+                        <TextBlock x:Name="aProgress" Text="0" HorizontalAlignment="Center"/>
+                    </Grid>
+                </Grid>
+                <Grid BorderBrush="Black" BorderThickness="2" CornerRadius="2" Margin="3" x:Name="bGrid">
+                    <TextBlock Text="b" Margin="2,0,0,0"/>
+                    <TextBlock x:Name="bTextBlock" Text="0" TextAlignment="Right" Margin="0,0,2,0"/>
+                    <Grid x:Name="bProgressGrid" HorizontalAlignment="Right" Visibility="Collapsed">
+                        <ProgressBar HorizontalAlignment="Right" Height="26" Width="65" BorderBrush="Gray" Foreground="Gray" BorderThickness="2" Value="{Binding Text, ElementName=homeProgress}"/>
+                        <TextBlock x:Name="bProgress" Text="0" HorizontalAlignment="Center"/>
+                    </Grid>
+                </Grid>
+            </StackPanel>
+            
+        </Grid>
+    </Grid>
+</Page>

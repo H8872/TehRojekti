@@ -25,8 +25,8 @@
         <TextBlock Grid.Column="1" Grid.Row="1" Text="Rookie" HorizontalAlignment="Center" FontSize="64" Margin="0,0,0,60"/>
         <StackPanel Grid.Row="2" HorizontalAlignment="Center" Grid.Column="1">
             <Button x:Name="PlayButton" Content="Play Game" Margin="10" Width="200" FontSize="24" Click="PlayButton_Click"/>
-            <Button x:Name="OptionsButton" Content="Options" Width="200" FontSize="24" Margin="10"/>
-            <Button x:Name="QuitButton" Content="Quit" Width="200" FontSize="24" Margin="10"/>
+            <Button x:Name="OptionsButton" Content="Options" Width="200" FontSize="24" Margin="10" Click="OptionsButton_Click"/>
+            <Button x:Name="QuitButton" Content="Quit" Width="200" FontSize="24" Margin="10" Click="QuitButton_Click"/>
         </StackPanel>
     </Grid>
 </Page>

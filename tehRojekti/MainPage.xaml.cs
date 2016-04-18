@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Runtime.Serialization.Json;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.ViewManagement;
@@ -13,6 +15,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using System.Xml.Serialization;
 using tehRojekti.SideBar;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -24,6 +27,7 @@ namespace tehRojekti
     /// </summary>
     public sealed partial class MainPage : Page
     {
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -32,13 +36,32 @@ namespace tehRojekti
             ApplicationView.PreferredLaunchWindowingMode
                 = ApplicationViewWindowingMode.PreferredLaunchViewSize;
 
-
+            
         }
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
-            // add and navigate to a new page
-            this.Frame.Navigate(typeof(GameMap));
+            try
+            {
+                // add and navigate to a new page
+                this.Frame.Navigate(typeof(GameMap));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+            
+        }
+
+        private void QuitButton_Click(object sender, RoutedEventArgs e)
+        {
+            (App.Current as App).Exit();
+        }
+
+        private void OptionsButton_Click(object sender, RoutedEventArgs e)
+        {
+            Stream writeStream = new FileStream(@"C:\thingymcdoo\testi.bin", FileMode.Create, FileAccess.Write, FileShare.None);
+            
         }
     }
 }
