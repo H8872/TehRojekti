@@ -30,6 +30,7 @@ namespace tehRojekti.SideBar
         public double Progress { get; set; }
         public double ProgressSpeed { get; set; }
         public int BuildOrder { get; set; }
+        public int Building { get; set; }
 
         public int LocationY { get; set; }
 
@@ -43,15 +44,16 @@ namespace tehRojekti.SideBar
             MiddleContent = "";
             RightContent = "";
             ButtonContent = "";
-            RightVisible = true;
-            ButtonVisible = false;
-            ProgressBarVisible = false;
+            //RightVisible = true;
+            //ButtonVisible = false;
+            //ProgressBarVisible = false;
             ProgressSpeed = 0;
-            SetValue(ProgressBar.MaximumProperty, 100);
+            progressBar.Maximum = 100;
+            (App.Current as App).BuildOrder++;
             BuildOrder = (App.Current as App).BuildOrder;
             (App.Current as App).BuildOrder++;
 
-            timer.Interval = new TimeSpan(0, 0, 1);
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 1000 / 60);
             timer.Tick += Timer_Tick;
         }
 
@@ -63,73 +65,76 @@ namespace tehRojekti.SideBar
 
         public void UpdateInfo()
         {
-            Left.Text = LeftContent;
-            Middle.Text = MiddleContent;
-            Right.Text = RightContent;
-            Button.Content = ButtonContent;
+            left.Text = LeftContent;
+            middle.Text = MiddleContent;
+            right.Text = RightContent;
+            button.Content = ButtonContent;
 
             if (MiddleContent != "")
             {
                 SetValue(Canvas.TopProperty, LocationY);
-                ProgressBar.Visibility = Visibility.Collapsed;
-                Button.Visibility = Visibility.Collapsed;
-                Left.Visibility = Visibility.Collapsed;
-                Right.Visibility = Visibility.Collapsed;
+                progressBar.Visibility = Visibility.Collapsed;
+                button.Visibility = Visibility.Collapsed;
+                left.Visibility = Visibility.Collapsed;
+                right.Visibility = Visibility.Collapsed;
             }
             else
             {
-                Middle.Visibility = Visibility.Collapsed;
+                middle.Visibility = Visibility.Collapsed;
                 SetValue(Canvas.TopProperty, LocationY);
             }
 
             if (RightVisible)
             {
-                Right.Visibility = Visibility.Visible;
+                right.Visibility = Visibility.Visible;
             }
             else
             {
-                Right.Visibility = Visibility.Collapsed;
+                right.Visibility = Visibility.Collapsed;
             }
 
             if (ButtonVisible)
             {
-                Button.Visibility = Visibility.Visible;
+                button.Visibility = Visibility.Visible;
             }
             else
             {
-                Button.Visibility = Visibility.Collapsed;
+                button.Visibility = Visibility.Collapsed;
             }
 
             if (ProgressBarVisible)
             {
-                ProgressBar.Visibility = Visibility.Visible;
+                progressBar.Visibility = Visibility.Visible;
             }
             else
             {
-                ProgressBar.Visibility = Visibility.Collapsed;
+                progressBar.Visibility = Visibility.Collapsed;
             }
         }
 
         public void ProgressUpdate()
         {
-            ProgressBar.Value = Progress;
+            progressBar.Value = Progress;
             if (Progress >= 100)
             {
                 timer.Stop();
-                ProgressBar.Visibility = Visibility.Collapsed;
+                ProgressBarVisible = false;
                 RightContent = "Completed";
-                Right.Text = "Completed";
-                Right.Visibility = Visibility.Visible;
-                (App.Current as App).BuildState = 2;
+                right.Text = "Completed";
+                RightVisible = true;
+                Progress = 100;
+                (App.Current as App).BuildState = BuildOrder + 1;
+                UpdateInfo();
             }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             timer.Start();
-            (App.Current as App).BuildState = 1;
-            Button.Visibility = Visibility.Collapsed;
-            ProgressBar.Visibility = Visibility.Visible;
+            (App.Current as App).BuildState = BuildOrder;
+            ButtonVisible = false;
+            ProgressBarVisible = true;
+            UpdateInfo();
         }
     }
 }

@@ -23,9 +23,10 @@ namespace tehRojekti
     /// </summary>
     sealed partial class App : Application
     {
+        //public int BuildingOrder { get; set; }
+        //public int BuildingNow { get; set; }
         public int BuildState { get; set; }
         public int BuildOrder { get; set; }
-        public int BuildingNow { get; set; }
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().

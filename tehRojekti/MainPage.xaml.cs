@@ -17,6 +17,8 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using System.Xml.Serialization;
 using tehRojekti.SideBar;
+using Windows.Storage;
+using System.Runtime.Serialization;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -58,10 +60,12 @@ namespace tehRojekti
             (App.Current as App).Exit();
         }
 
-        private void OptionsButton_Click(object sender, RoutedEventArgs e)
+        private async void OptionsButton_Click(object sender, RoutedEventArgs e)
         {
-            Stream writeStream = new FileStream(@"C:\thingymcdoo\testi.bin", FileMode.Create, FileAccess.Write, FileShare.None);
-            
+            StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
+            StorageFile saveFile = await storageFolder.CreateFileAsync("save.dat", CreationCollisionOption.ReplaceExisting);
+            Debug.WriteLine(saveFile.Path);
+            await saveFile.DeleteAsync(StorageDeleteOption.Default);
         }
     }
 }

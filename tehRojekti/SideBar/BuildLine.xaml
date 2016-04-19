@@ -19,11 +19,11 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <TextBlock x:Name="Middle" Text="Middle" HorizontalAlignment="Center" Grid.Column="1" FontSize="30" Padding="7,0,0,0" Margin="0"/>
-        <TextBlock x:Name="Left" Text="Left" HorizontalAlignment="Left" Grid.Column="0"/>
-        <TextBlock x:Name="Right" Text="Right" TextAlignment="Right" HorizontalAlignment="Right" Grid.Column="2"/>
-        <Button x:Name="Button" Content="Button" HorizontalAlignment="Right" Grid.Column="2" VerticalAlignment="Top" Height="23" Padding="6,-3,6,0" Margin="0,3,0,0" Click="Button_Click"/>
-        <ProgressBar x:Name="ProgressBar" Width="100" Grid.Column="2" VerticalAlignment="Top" Height="19" Padding="0,3,0,0" Margin="0,5,0,0"/>
+        <TextBlock x:Name="middle" Text="Middle" HorizontalAlignment="Center" Grid.Column="1" FontSize="30" Padding="7,0,0,0" Margin="0"/>
+        <TextBlock x:Name="left" Text="Left" HorizontalAlignment="Left" Grid.Column="0"/>
+        <TextBlock x:Name="right" Text="Right" TextAlignment="Right" HorizontalAlignment="Right" Grid.Column="2"/>
+        <Button x:Name="button" Content="Button" HorizontalAlignment="Right" Grid.Column="2" VerticalAlignment="Top" Height="23" Padding="6,-3,6,0" Margin="0,3,0,0" Click="Button_Click"/>
+        <ProgressBar x:Name="progressBar" Width="100" Grid.Column="2" VerticalAlignment="Top" Height="19" Padding="0,3,0,0" Margin="0,5,0,0"/>
 
     </Grid>
 </UserControl>
