@@ -33,7 +33,7 @@
                     <Button x:Name="MenuButton" Content="Menu" Height="40" Margin="2" Click="MenuButton_Click"/>
                     <Button x:Name="BuildButton" Content="Build" Height="40" Margin="2" Click="BuildButton_Click"/>
                     <Button x:Name="InfoButton" Content="Info" Height="40" Margin="2" Click="InfoButton_Click"/>
-                    
+
                 </StackPanel>
             </StackPanel>
             
@@ -60,15 +60,15 @@
                         <TextBlock x:Name="homeProgress" Text="0" HorizontalAlignment="Center"/>
                     </Grid>
                 </Grid>
-                <Grid BorderBrush="Black" BorderThickness="2" CornerRadius="2" Margin="3" x:Name="yardGrid" Tapped="yardGrid_Tapped">
-                    <TextBlock Text="Yard" Margin="2,0,0,0" Visibility="Collapsed"/>
-                    <TextBlock x:Name="yardTextBlock" Text="0" TextAlignment="Right" Margin="0,0,2,0" Visibility="Collapsed"/>
+                <Grid BorderBrush="Black" BorderThickness="2" CornerRadius="2" Margin="3" x:Name="yardGrid" Tapped="yardGrid_Tapped" Visibility="Collapsed">
+                    <TextBlock Text="Yard" Margin="2,0,0,0"/>
+                    <TextBlock x:Name="yardTextBlock" Text="0" TextAlignment="Right" Margin="0,0,2,0"/>
                     <Grid x:Name="yardProgressGrid" HorizontalAlignment="Right" Visibility="Collapsed">
                         <ProgressBar HorizontalAlignment="Right" Height="26" Width="65" BorderBrush="Gray" Foreground="Gray" BorderThickness="2" Value="{Binding Text, ElementName=homeProgress}"/>
                         <TextBlock x:Name="yardProgress" Text="0" HorizontalAlignment="Center"/>
                     </Grid>
                 </Grid>
-                <Grid BorderBrush="Black" BorderThickness="2" CornerRadius="2" Margin="3" x:Name="workGrid">
+                <Grid BorderBrush="Black" BorderThickness="2" CornerRadius="2" Margin="3" x:Name="workGrid" Tapped="workGrid_Tapped">
                     <TextBlock Text="Workshop" Margin="2,0,0,0"/>
                     <TextBlock x:Name="workTextBlock" Text="0" TextAlignment="Right" Margin="0,0,2,0"/>
                     <Grid x:Name="workProgressGrid" HorizontalAlignment="Right" Visibility="Collapsed">
