@@ -60,7 +60,6 @@ namespace tehRojekti
 
         private void OptionsButton_Click(object sender, RoutedEventArgs e)
         {
-            Stream writeStream = new FileStream(@"C:\thingymcdoo\testi.bin", FileMode.Create, FileAccess.Write, FileShare.None);
             
         }
     }
