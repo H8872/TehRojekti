@@ -10,10 +10,12 @@ namespace tehRojekti.Class
     {
         public bool homeBuilt { get; set; }
         public bool yardBuilt { get; set; }
+        public bool workshopBuilt { get; set; }
 
         public void BuildingBuiltClass()
         {
             homeBuilt = true;
+            yardBuilt = false;
             yardBuilt = false;
         }
     }

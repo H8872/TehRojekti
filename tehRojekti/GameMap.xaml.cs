@@ -48,6 +48,7 @@ namespace tehRojekti
         ResourcesClass homeResources = new ResourcesClass();
         ResourcesClass yardResources = new ResourcesClass();
         ResourcesClass workResources = new ResourcesClass();
+        List<ResourcesClass> listResources = new List<ResourcesClass>();
 
         private bool currentType; //True: Info / False: Build
 
@@ -55,6 +56,8 @@ namespace tehRojekti
         
         private int yardReqWood = 5;
         private int yardReqStone = 5;
+        private int workReqWood = 15;
+        private int workReqStone = 20;
         private int buildState;
         //private int buildingNow;
         //private int buildingOrder;
@@ -65,7 +68,8 @@ namespace tehRojekti
         InfoLine food = new InfoLine {};
         InfoLine homeTitle = new InfoLine {};
         
-        BuildLine buildYard = new BuildLine { LeftContent = "Yard", ButtonContent = "[5w , 5s]", RightContent = "[5w , 5s]" };
+        BuildLine buildYard;
+        BuildLine buildWorkshop;
 
         public GameMap()
         {
@@ -74,10 +78,10 @@ namespace tehRojekti
             ReadSave();
             
             //Initializing resources
-            InitializeResources();
+            //InitializeResources();
+            //AddResources(allResources, homeResources);
 
             //Initializing sidebar stuff
-            (App.Current as App).BuildOrder = 0;
             InitializeInfo();
             InitializeBuild();
 
@@ -99,36 +103,81 @@ namespace tehRojekti
             {
                 // find a file
                 StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
-                Stream stream = await storageFolder.OpenStreamForReadAsync("save.dat");
+                Stream BuildingStream = await storageFolder.OpenStreamForReadAsync("BuildingsBuilt.dat");
+                Stream ResourceStream = await storageFolder.OpenStreamForReadAsync("Resources.dat");
 
                 // is it empty
-                if (stream == null) BuildingsBuilt = new BuildingsBuiltClass();
+                if (BuildingStream == null) BuildingsBuilt = new BuildingsBuiltClass();
+                if (ResourceStream == null) InitializeResources();
+                else
+                {
+                    // read data
+                    DataContractSerializer ResourcesSerializer = new DataContractSerializer(typeof(List<ResourcesClass>));
+                    listResources = (List<ResourcesClass>)ResourcesSerializer.ReadObject(ResourceStream);////////////////////////////////TÄSTÄ TULE NOLIA DDDDDDDDDDD::::::::
+                    foreach (ResourcesClass ai in listResources)
+                    {
+                        switch (ai.Building)
+                        {
+                            case 0:
+                                allResources = ai;
+                                break;
+
+                            case 1:
+                                homeResources = ai;
+                                break;
+
+                            case 2:
+                                yardResources = ai;
+                                break;
+
+                            case 3:
+                                workResources = ai;
+                                break;
+                        }
+                    }
+                }
 
                 // read data
-                DataContractSerializer serializer = new DataContractSerializer(typeof(BuildingsBuiltClass));
-                DataContractSerializer bserializer = new DataContractSerializer(typeof(ResourcesClass));
-                BuildingsBuilt = (BuildingsBuiltClass)serializer.ReadObject(stream);
-                //allResources = (ResourcesClass)bserializer.ReadObject(stream);
+                DataContractSerializer BuildingSerializer = new DataContractSerializer(typeof(BuildingsBuiltClass));
+                BuildingsBuilt = (BuildingsBuiltClass)BuildingSerializer.ReadObject(BuildingStream);
+                
+
+            }
+            catch (IOException ex)
+            {
+                Debug.WriteLine("IO Exeption happened (reading): " + ex.ToString());
+                if(ex.HResult == -2147024894)
+                {
+                    InitializeResources();
+                }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Following exception has happend (reading): " + ex.ToString());
+                Debug.WriteLine("Poop Following exception has happend (reading): " + ex.ToString());
             }
         }
 
         private void Timer_Tick(object sender, object e)
         {
             /* Build states:
-            1 = building yard
-            2 = yard complete            
+            1 = For Title
+            2 = For Title
+            3 = For Title
+            4 = For Title
+            5 = building yard
+            6 = yard complete
+            7 = building workshop
+            8 = workshop complete
             */
             buildState = (App.Current as App).BuildState;
             //buildingOrder = (App.Current as App).BuildOrder;
 
-            if (allResources.Wood >= yardReqWood && allResources.Stone >= yardReqStone)
+            if (!BuildingsBuilt.yardBuilt)
             {
-                if (!BuildingsBuilt.yardBuilt)
+
+                if (allResources.Wood >= yardReqWood && allResources.Stone >= yardReqStone && buildYard.Progress == 0)
                 {
+
                     if (buildYard.Progress == 0)
                     {
                         buildYard.RightVisible = false;
@@ -140,33 +189,83 @@ namespace tehRojekti
                         buildYard.ButtonVisible = false;
                     }
                 }
-                else
+                else if (allResources.Stone < yardReqStone && buildYard.Progress == 0 || allResources.Wood < yardReqWood && buildYard.Progress == 0)
                 {
-                    buildYard.RightContent = "Completed";
                     buildYard.RightVisible = true;
-                    if (yardGrid.Visibility == Visibility.Collapsed)
-                    {
-                        AddResources(allResources, yardResources);
-                        yardGrid.Visibility = Visibility.Visible;
-                    }
+                    buildYard.ButtonVisible = false;
                 }
-
             }
-            else if(allResources.Wood < yardReqWood && allResources.Stone < yardReqStone && buildYard.Progress == 0)
+            else
             {
+                buildYard.RightContent = "Completed";
                 buildYard.RightVisible = true;
-                buildYard.ButtonVisible = false;
+                if (yardGrid.Visibility == Visibility.Collapsed)
+                {
+                    AddResources(allResources, yardResources);
+                    yardGrid.Visibility = Visibility.Visible;
+                }
             }
-            if(buildState == 1)
+            if (buildState == 5)
             {
-                allResources.Wood -= 5;
-                allResources.Stone -= 5;
+                allResources.Wood -= yardReqWood;
+                allResources.Stone -= yardReqStone;
+                InitializeInfo();
             }
-            else if(buildState == 2)
+            else if (buildState == 6)
             {
                 buildYard.ButtonVisible = false;
                 buildYard.ProgressBarVisible = false;
                 BuildingsBuilt.yardBuilt = true;
+                InitializeInfo();
+                UpdateCanvas(currentType);
+            }
+
+
+            if (!BuildingsBuilt.workshopBuilt)
+            {
+                if (allResources.Wood >= workReqWood && allResources.Stone >= workReqStone)
+                {
+                    if (buildWorkshop.Progress == 0)
+                    {
+                        buildWorkshop.RightVisible = false;
+                        buildWorkshop.ButtonVisible = true;
+                    }
+                    else if (buildWorkshop.Progress > 0)
+                    {
+                        buildWorkshop.ProgressBarVisible = true;
+                        buildWorkshop.ButtonVisible = false;
+                    }
+                }
+                else if (allResources.Wood < workReqWood && buildWorkshop.Progress == 0 || allResources.Stone < workReqStone && buildWorkshop.Progress == 0)
+                {
+                    buildWorkshop.ButtonVisible = false;
+                    buildWorkshop.RightVisible = true;
+                }
+            }
+            else
+            {
+                buildWorkshop.RightContent = "Completed";
+                buildWorkshop.RightVisible = true;
+                buildWorkshop.ProgressBarVisible = false;
+                if (workGrid.Visibility == Visibility.Collapsed)
+                {
+                    AddResources(allResources, workResources);
+                    workGrid.Visibility = Visibility.Visible;
+                }
+            }
+            if (buildState == 7)
+            {
+                allResources.Wood = allResources.Wood - workReqWood;
+                allResources.Stone = allResources.Stone - workReqStone;
+                InitializeInfo();
+                UpdateCanvas(currentType);
+            }
+            else if (buildState == 8)
+            {
+                buildWorkshop.ButtonVisible = false;
+                buildWorkshop.ProgressBarVisible = false;
+                BuildingsBuilt.workshopBuilt = true;
+                UpdateCanvas(currentType);
             }
 
             InitializeInfo();
@@ -200,29 +299,45 @@ namespace tehRojekti
 
             //Adding resourcesList to HomeInfo
             HomeInfo.Clear();
+            YardInfo.Clear();
             InfoLine homeTitle = new InfoLine { MiddleContent = "Home" };
+            InfoLine yardTitle = new InfoLine { MiddleContent = "Yard" };
             HomeInfo.Add(homeTitle);
+            YardInfo.Add(yardTitle);
             foreach (InfoLine line in resourceList)
             {
                 HomeInfo.Add(line);
+                YardInfo.Add(line);
             }
             InfoLine availableTitle = new InfoLine { MiddleContent = "Available" };
             InfoLine yardAvailable = new InfoLine { LeftContent = "Yard", RightContent = "Available" };
             HomeInfo.Add(availableTitle);
             HomeInfo.Add(yardAvailable);
+
+            listResources.Clear();
+            listResources.Add(allResources);
+            listResources.Add(homeResources);
+            listResources.Add(yardResources);
+            listResources.Add(workResources);
         }
 
         private void InitializeBuild()
         {
-            buildYard = new BuildLine { LeftContent = "Yard", ButtonContent = "[5w , 5s]" , RightContent = "[5w , 5s]" , ProgressSpeed = 10};
-
             BuildLine homeTitle = new BuildLine { MiddleContent = "Home" };
+            BuildLine yardTitle = new BuildLine { MiddleContent = "Yard" };
+
+            buildYard = new BuildLine { LeftContent = "Yard", ButtonContent = "[" + yardReqWood + "w , "+ yardReqStone + "s]" , RightContent = "[" + yardReqWood + "w , " + yardReqStone + "s]", ProgressSpeed = 10};
+            buildWorkshop = new BuildLine { LeftContent = "Workshop", ButtonContent = "[" + workReqWood + "w , " + workReqStone + "s]", RightContent = "[" + workReqWood + "w , " + workReqStone + "s]", ProgressSpeed = 10 };
+
             HomeBuild.Add(homeTitle);
             HomeBuild.Add(buildYard);
+            YardBuild.Add(yardTitle);
+            YardBuild.Add(buildWorkshop);
         }
 
         private void InitializeResources()
         {
+            allResources.Building = 0;
             allResources.maxWood = 5;
             allResources.maxFood = 5;
             allResources.maxStone = 5;
@@ -230,26 +345,31 @@ namespace tehRojekti
             allResources.Stone = 5;
             allResources.Food = 5;
 
-            homeResources.maxWood = 10;
+            homeResources.Building = 1;
+            homeResources.maxWood = 15;
             homeResources.maxStone = 10;
-            homeResources.maxFood = 15;
+            homeResources.maxFood = 25;
             homeResources.Wood = 5;
-            homeResources.Stone = 0;
-            homeResources.Food = 10;
+            homeResources.Stone = 5;
+            homeResources.Food = 15;
 
-            yardResources.maxWood = 15;
-            yardResources.maxStone = 15;
-            yardResources.maxFood = 5;
-            yardResources.Wood = 10;
-            yardResources.Stone = 10;
+            yardResources.Building = 2;
+            yardResources.maxWood = 45;
+            yardResources.maxStone = 45;
+            yardResources.maxFood = 15;
+            yardResources.Wood = 20;
+            yardResources.Stone = 20;
             yardResources.Food = 5;
 
-            workResources.maxWood = 10;
-            workResources.maxStone = 10;
-            workResources.maxFood = 5;
-            workResources.Wood = 5;
-            workResources.Stone = 10;
+            workResources.Building = 3;
+            workResources.maxWood = 50;
+            workResources.maxStone = 45;
+            workResources.maxFood = 15;
+            workResources.Wood = 15;
+            workResources.Stone = 15;
             workResources.Food = 5;
+
+            AddResources(allResources, homeResources);
         }
         
         
@@ -282,11 +402,11 @@ namespace tehRojekti
                 {
                     if (line.MiddleContent == "")
                     {
-                        line.LocationY = 32 * linePos;
+                        line.LocationY = 30 * linePos;
                     }
                     else
                     {
-                        line.LocationY = 27 * linePos;
+                        line.LocationY = 28 * linePos;
                         line.ProgressBarVisible = false;
                         line.RightVisible = true;
                     }
@@ -294,7 +414,7 @@ namespace tehRojekti
                     SideCanvas.Children.Add(line);
                     linePos++;
                 }
-            } 
+            }
         }
 
         private void homeGrid_Tapped(object sender, TappedRoutedEventArgs e)
@@ -334,16 +454,23 @@ namespace tehRojekti
         {
             try
             {
-                StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
-                StorageFile saveFile = await storageFolder.CreateFileAsync("save.dat", CreationCollisionOption.OpenIfExists);
+                InitializeInfo();
 
-                Stream stream = await saveFile.OpenStreamForWriteAsync();
-                DataContractSerializer aserializer = new DataContractSerializer(typeof(BuildingsBuiltClass));
-                //DataContractSerializer bserializer = new DataContractSerializer(typeof(ResourcesClass));
-                aserializer.WriteObject(stream, BuildingsBuilt);
-                //bserializer.WriteObject(stream, allResources);
-                await stream.FlushAsync();
-                stream.Dispose();
+                StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
+                StorageFile saveBuildings = await storageFolder.CreateFileAsync("BuildingsBuilt.dat", CreationCollisionOption.OpenIfExists);
+                StorageFile saveResources = await storageFolder.CreateFileAsync("Resources.dat", CreationCollisionOption.OpenIfExists);
+
+                Stream BuildingStream = await saveBuildings.OpenStreamForWriteAsync();
+                DataContractSerializer BuildingSerializer = new DataContractSerializer(typeof(BuildingsBuiltClass));
+                BuildingSerializer.WriteObject(BuildingStream, BuildingsBuilt);
+                await BuildingStream.FlushAsync();
+                BuildingStream.Dispose();
+
+                Stream ResourceStream = await saveResources.OpenStreamForWriteAsync();
+                DataContractSerializer ResourceSerializer = new DataContractSerializer(typeof(List<ResourcesClass>));
+                ResourceSerializer.WriteObject(ResourceStream, listResources);////////////////////////////////////////////////////////////////PALAUTTAA NOLIA DDD:
+                await ResourceStream.FlushAsync();
+                ResourceStream.Dispose();
             }
             catch (Exception ex)
             {

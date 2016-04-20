@@ -68,7 +68,7 @@
                         <TextBlock x:Name="yardProgress" Text="0" HorizontalAlignment="Center"/>
                     </Grid>
                 </Grid>
-                <Grid BorderBrush="Black" BorderThickness="2" CornerRadius="2" Margin="3" x:Name="workGrid" Tapped="workGrid_Tapped">
+                <Grid BorderBrush="Black" BorderThickness="2" CornerRadius="2" Margin="3" x:Name="workGrid" Tapped="workGrid_Tapped" Visibility="Collapsed">
                     <TextBlock Text="Workshop" Margin="2,0,0,0"/>
                     <TextBlock x:Name="workTextBlock" Text="0" TextAlignment="Right" Margin="0,0,2,0"/>
                     <Grid x:Name="workProgressGrid" HorizontalAlignment="Right" Visibility="Collapsed">

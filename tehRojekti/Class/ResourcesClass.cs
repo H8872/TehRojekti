@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace tehRojekti.Class
 {
-    class ResourcesClass
+    public class ResourcesClass
     {
+        public int Building { get; set; }
         public int maxFood { get; set; }
-        private int food = 10;
+        private int food;
         public int Food
         {
             get
@@ -18,16 +19,16 @@ namespace tehRojekti.Class
             }
             set
             {
-                if (food + value > maxFood)
+                if (value >= maxFood)
                 {
                     food = maxFood;
                 }
-                else food += value;
+                else food = value;
             }
         }
 
         public int maxWood { get; set; }
-        private int wood = 10;
+        private int wood;
         public int Wood
         {
             get
@@ -36,16 +37,16 @@ namespace tehRojekti.Class
             }
             set
             {
-                if (wood + value > maxWood)
+                if (value >= maxWood)
                 {
                     wood = maxWood;
                 }
-                else wood += value;
+                else wood = value;
             }
         }
 
         public int maxStone { get; set; }
-        private int stone = 10;
+        private int stone;
         public int Stone
         {
             get
@@ -54,11 +55,11 @@ namespace tehRojekti.Class
             }
             set
             {
-                if (stone + value > maxStone)
+                if (value >= maxStone)
                 {
                     stone = maxStone;
                 }
-                else stone += value;
+                else stone = value;
             }
         }
     }
