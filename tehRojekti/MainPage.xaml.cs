@@ -66,9 +66,9 @@ namespace tehRojekti
         private async void OptionsButton_Click(object sender, RoutedEventArgs e)
         {
             StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
-            StorageFile saveFile = await storageFolder.CreateFileAsync("BuildingsBuilt.dat", CreationCollisionOption.ReplaceExisting);
+            StorageFile saveFile = await storageFolder.CreateFileAsync("BuildingsBuilt.xml", CreationCollisionOption.ReplaceExisting);
             await saveFile.DeleteAsync(StorageDeleteOption.Default);
-            saveFile = await storageFolder.CreateFileAsync("Resources.dat", CreationCollisionOption.ReplaceExisting);
+            saveFile = await storageFolder.CreateFileAsync("Resources.xml", CreationCollisionOption.ReplaceExisting);
             Debug.WriteLine(saveFile.Path);
             await saveFile.DeleteAsync(StorageDeleteOption.Default);
         }

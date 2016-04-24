@@ -11,6 +11,7 @@ namespace tehRojekti.Class
         public int Building { get; set; }
         public int maxFood { get; set; }
         private int food;
+        private int i=0;
         public int Food
         {
             get
@@ -19,11 +20,20 @@ namespace tehRojekti.Class
             }
             set
             {
-                if (value >= maxFood)
+                if (i < 3)
                 {
-                    food = maxFood;
+                    food = value;
+                    i++;
                 }
-                else food = value;
+                else
+                {
+                    if (value >= maxFood)
+                    {
+                        food = maxFood;
+                    }
+                    else food = value;
+                }
+                
             }
         }
 
@@ -37,11 +47,19 @@ namespace tehRojekti.Class
             }
             set
             {
-                if (value >= maxWood)
+                if (i < 3)
                 {
-                    wood = maxWood;
+                    wood = value;
+                    i++;
                 }
-                else wood = value;
+                else
+                {
+                    if (value >= maxWood)
+                    {
+                        wood = maxWood;
+                    }
+                    else wood = value;
+                }
             }
         }
 
@@ -55,11 +73,19 @@ namespace tehRojekti.Class
             }
             set
             {
-                if (value >= maxStone)
+                if (i < 3)
                 {
-                    stone = maxStone;
+                    stone = value;
+                    i++;
                 }
-                else stone = value;
+                else
+                {
+                    if (value >= maxStone)
+                    {
+                        stone = maxStone;
+                    }
+                    else stone = value;
+                }
             }
         }
     }

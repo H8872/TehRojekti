@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -72,7 +73,7 @@ namespace tehRojekti.SideBar
             buildOrder = (App.Current as App).BuildOrder;
             (App.Current as App).BuildOrder++;
 
-            timer.Interval = new TimeSpan(0, 0, 0, 1);
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 500);
             timer.Tick += Timer_Tick;
         }
 
@@ -143,6 +144,7 @@ namespace tehRojekti.SideBar
                 Progress = 100;
                 (App.Current as App).BuildState = buildOrder + 1;
                 UpdateInfo();
+                Debug.WriteLine(buildOrder.ToString());
             }
         }
 
@@ -154,6 +156,7 @@ namespace tehRojekti.SideBar
             ButtonVisible = false;
             ProgressBarVisible = true;
             UpdateInfo();
+            Debug.WriteLine(buildOrder.ToString());
         }
     }
 }
