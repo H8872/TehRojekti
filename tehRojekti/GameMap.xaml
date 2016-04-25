@@ -36,8 +36,10 @@
 
                 </StackPanel>
             </StackPanel>
+            <ScrollViewer x:Name="CanvasScroller" Grid.Row="4" HorizontalAlignment="Center" Width="275" Height="640" VerticalScrollMode="Auto">
+                    <Canvas x:Name="SideCanvas" HorizontalAlignment="Center" Width="275"/>
+            </ScrollViewer>
             
-            <Canvas x:Name="SideCanvas" Grid.Row="4" HorizontalAlignment="Center" Width="275"/>
             
         </Grid>
         
@@ -100,12 +102,28 @@
                         <TextBlock x:Name="lumberProgress" Text="0" HorizontalAlignment="Center"/>
                     </Grid>
                 </Grid>
-                <Grid BorderBrush="Black" BorderThickness="2" CornerRadius="2" Margin="3" x:Name="storageGrid" Tapped="storageGrid_Tapped">
+                <Grid BorderBrush="Black" BorderThickness="2" CornerRadius="2" Margin="3" x:Name="storageGrid" Tapped="storageGrid_Tapped" Visibility="Collapsed">
                     <TextBlock Text="Storage" Margin="2,0,0,0"/>
                     <TextBlock x:Name="storageTextBlock" Text="" TextAlignment="Right" Margin="0,0,2,0"/>
                     <Grid x:Name="storageProgressGrid" HorizontalAlignment="Right" Visibility="Collapsed">
                         <ProgressBar HorizontalAlignment="Right" Height="26" Width="65" BorderBrush="Gray" Foreground="Gray" BorderThickness="2" Value="{Binding Text, ElementName=storageProgress}"/>
                         <TextBlock x:Name="storageProgress" Text="0" HorizontalAlignment="Center"/>
+                    </Grid>
+                </Grid>
+                <Grid BorderBrush="Black" BorderThickness="2" CornerRadius="2" Margin="3" x:Name="siloGrid" Tapped="siloGrid_Tapped" Visibility="Collapsed">
+                    <TextBlock Text="Silo" Margin="2,0,0,0"/>
+                    <TextBlock x:Name="siloTextBlock" Text="" TextAlignment="Right" Margin="0,0,2,0"/>
+                    <Grid x:Name="siloProgressGrid" HorizontalAlignment="Right" Visibility="Collapsed">
+                        <ProgressBar HorizontalAlignment="Right" Height="26" Width="65" BorderBrush="Gray" Foreground="Gray" BorderThickness="2" Value="{Binding Text, ElementName=siloProgress}"/>
+                        <TextBlock x:Name="siloProgress" Text="0" HorizontalAlignment="Center"/>
+                    </Grid>
+                </Grid>
+                <Grid BorderBrush="Black" BorderThickness="2" CornerRadius="2" Margin="3" x:Name="tradingGrid" Tapped="tradingGrid_Tapped" Visibility="Collapsed">
+                    <TextBlock Text="Trading" Margin="2,0,0,0"/>
+                    <TextBlock x:Name="tradingTextBlock" Text="" TextAlignment="Right" Margin="0,0,2,0"/>
+                    <Grid x:Name="tradingProgressGrid" HorizontalAlignment="Right" Visibility="Collapsed">
+                        <ProgressBar HorizontalAlignment="Right" Height="26" Width="65" BorderBrush="Gray" Foreground="Gray" BorderThickness="2" Value="{Binding Text, ElementName=tradingProgress}"/>
+                        <TextBlock x:Name="tradingProgress" Text="0" HorizontalAlignment="Center"/>
                     </Grid>
                 </Grid>
             </StackPanel>

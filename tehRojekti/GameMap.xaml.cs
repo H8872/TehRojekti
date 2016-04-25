@@ -42,9 +42,11 @@ namespace tehRojekti
         ObservableCollection<InfoLine> YardInfo = new ObservableCollection<InfoLine>();
         ObservableCollection<InfoLine> WorkshopInfo = new ObservableCollection<InfoLine>();
         ObservableCollection<InfoLine> StorageInfo = new ObservableCollection<InfoLine>();
+        ObservableCollection<InfoLine> SiloInfo = new ObservableCollection<InfoLine>();
         ObservableCollection<InfoLine> FarmInfo = new ObservableCollection<InfoLine>();
         ObservableCollection<InfoLine> MineInfo = new ObservableCollection<InfoLine>();
         ObservableCollection<InfoLine> LumberInfo = new ObservableCollection<InfoLine>();
+        ObservableCollection<InfoLine> TradingInfo = new ObservableCollection<InfoLine>();
 
         ObservableCollection<InfoLine> resourceList = new ObservableCollection<InfoLine>();
 
@@ -53,9 +55,11 @@ namespace tehRojekti
         ObservableCollection<BuildLine> YardBuild = new ObservableCollection<BuildLine>();
         ObservableCollection<BuildLine> WorkshopBuild = new ObservableCollection<BuildLine>();
         ObservableCollection<BuildLine> StorageBuild = new ObservableCollection<BuildLine>();
+        ObservableCollection<BuildLine> SiloBuild = new ObservableCollection<BuildLine>();
         ObservableCollection<BuildLine> FarmBuild = new ObservableCollection<BuildLine>();
         ObservableCollection<BuildLine> MineBuild = new ObservableCollection<BuildLine>();
         ObservableCollection<BuildLine> LumberBuild = new ObservableCollection<BuildLine>();
+        ObservableCollection<BuildLine> TradingBuild = new ObservableCollection<BuildLine>();
 
         ResourcesClass allResources = new ResourcesClass();         // 0
         ResourcesClass homeResources = new ResourcesClass();        // 1
@@ -73,36 +77,36 @@ namespace tehRojekti
         
         private int yardReqWood = 5;
         private int yardReqStone = 5;
-        private int workReqWood = 15;
-        private int workReqStone = 20;
-        private int storageRoomReqWood = 20;
-        private int storageRoomReqStone = 20;
-        private int kitchenReqWood = 5;
-        private int kitchenReqStone = 5;
-        private int roadToPlainsReqStone = 5;
-        private int roadToPlainsReqWood = 5;
-        private int roadToMountainReqStone = 5;
-        private int roadToMountainReqWood = 5;
-        private int roadToForestReqStone = 5;
-        private int roadToForestReqWood = 5;
-        private int storageReqWood = 5;
-        private int storageReqStone = 5;
-        private int siloReqWood = 5;
-        private int siloReqStone = 5;
-        private int farmReqWood = 5;
-        private int farmReqStone = 5;
-        private int mineReqWood = 5;
-        private int mineReqStone = 5;
-        private int lumberReqWood = 5;
-        private int lumberReqStone = 5;
-        private int roadToVillageReqWood = 5;
-        private int roadToVillageReqStone = 5;
-        private int tradeReqWood = 5;
-        private int tradeReqStone = 5;
-        private int tradeRouteReqWood = 5;
-        private int tradeRouteReqStone = 5;
-        private int toolsReqWood = 5;
-        private int toolsReqStone = 5;
+        private int workReqWood = 1;
+        private int workReqStone = 1;
+        private int storageRoomReqWood = 1;
+        private int storageRoomReqStone = 1;
+        private int kitchenReqWood = 1;
+        private int kitchenReqStone = 1;
+        private int roadToPlainsReqStone = 1;
+        private int roadToPlainsReqWood = 1;
+        private int roadToMountainReqStone = 1;
+        private int roadToMountainReqWood = 1;
+        private int roadToForestReqStone = 1;
+        private int roadToForestReqWood = 1;
+        private int storageReqWood = 1;
+        private int storageReqStone = 1;
+        private int siloReqWood = 1;
+        private int siloReqStone = 1;
+        private int farmReqWood = 1;
+        private int farmReqStone = 1;
+        private int mineReqWood = 1;
+        private int mineReqStone = 1;
+        private int lumberReqWood = 1;
+        private int lumberReqStone = 1;
+        private int roadToVillageReqWood = 1;
+        private int roadToVillageReqStone = 1;
+        private int tradeReqWood = 1;
+        private int tradeReqStone = 1;
+        private int tradeRouteReqWood = 1;
+        private int tradeRouteReqStone = 1;
+        private int toolsReqWood = 1;
+        private int toolsReqStone = 1;
         private int buildState;
         //private int buildingNow;
         //private int buildingOrder;
@@ -129,6 +133,7 @@ namespace tehRojekti
         BuildLine buildTradingHouse; // 27 28
         BuildLine buildTradeRoute; // 29 30
         BuildLine buildTools; // 31 32
+        BuildLine buildExplore; // 33 34
 
         BuildLine homeBuildTitle;
         BuildLine yardTitle;
@@ -138,6 +143,7 @@ namespace tehRojekti
         BuildLine lumberTitle;
 
         BuildLine availableBuild;
+        BuildLine blankBuild;
         BuildLine completedBuild;
 
         public GameMap()
@@ -277,6 +283,26 @@ namespace tehRojekti
             //buildState = (App.Current as App).BuildState;
             //buildingOrder = (App.Current as App).BuildOrder;
 
+            if (buildState == 1)
+            {
+                allResources.Wood -= yardReqWood;
+                allResources.Stone -= yardReqStone;
+                InitializeInfo();
+                Debug.WriteLine(buildState.ToString());
+            }
+            else if (buildState == 2)
+            {
+                buildYard.ButtonVisible = false;
+                buildYard.ProgressBarVisible = false;
+                BuildingsBuilt.yardBuilt = true;
+                InitializeInfo();
+                UpdateCanvas(currentType);
+                AddResources(allResources, yardResources);
+                yardTextBlock.Text = "*";
+                UpdateBuild();
+                Debug.WriteLine(buildState.ToString());
+            }
+
             if (!BuildingsBuilt.yardBuilt)
             {
                 if (allResources.Wood >= yardReqWood && allResources.Stone >= yardReqStone && buildYard.Progress == 0)
@@ -302,24 +328,27 @@ namespace tehRojekti
             {
                 buildYard.RightContent = "Completed";
                 buildYard.RightVisible = true;
+                buildYard.ProgressBarVisible = false;
+                buildYard.ButtonVisible = false;
                 yardGrid.Visibility = Visibility.Visible;
             }
 
-            if (buildState == 1)
+            if (buildState == 3)
             {
-                allResources.Wood -= yardReqWood;
-                allResources.Stone -= yardReqStone;
-                InitializeInfo();
-            }
-            else if (buildState == 2)
-            {
-                buildYard.ButtonVisible = false;
-                buildYard.ProgressBarVisible = false;
-                BuildingsBuilt.yardBuilt = true;
+                allResources.Wood -= workReqWood;
+                allResources.Stone -= workReqStone;
                 InitializeInfo();
                 UpdateCanvas(currentType);
-                AddResources(allResources, yardResources);
-                yardTextBlock.Text = "*";
+            }
+            else if (buildState == 4)
+            {
+                buildWorkshop.ButtonVisible = false;
+                buildWorkshop.ProgressBarVisible = false;
+                BuildingsBuilt.workshopBuilt = true;
+                UpdateCanvas(currentType);
+                AddResources(allResources, workResources);
+                workTextBlock.Text = "*";
+                UpdateBuild();
             }
 
             if (!BuildingsBuilt.workshopBuilt)
@@ -348,74 +377,253 @@ namespace tehRojekti
                 buildWorkshop.RightContent = "Completed";
                 buildWorkshop.RightVisible = true;
                 buildWorkshop.ProgressBarVisible = false;
-                workGrid.Visibility = Visibility.Visible;
-            }
-
-            if (buildState == 3)
-            {
-                allResources.Wood -= workReqWood;
-                allResources.Stone -= workReqStone;
-                InitializeInfo();
-                UpdateCanvas(currentType);
-            }
-            else if (buildState == 4)
-            {
                 buildWorkshop.ButtonVisible = false;
-                buildWorkshop.ProgressBarVisible = false;
-                BuildingsBuilt.workshopBuilt = true;
-                UpdateCanvas(currentType);
-                AddResources(allResources, workResources);
-                workTextBlock.Text = "*";
-            }
-
-            if (!BuildingsBuilt.storageRoomBuilt)
-            {
-                if (allResources.Wood >= storageReqWood && allResources.Stone >= storageReqStone)
-                {
-                    if (buildStorageHouse.Progress == 0)
-                    {
-                        buildStorageHouse.RightVisible = false;
-                        buildStorageHouse.ButtonVisible = true;
-                    }
-                    else if (buildStorageHouse.Progress > 0)
-                    {
-                        buildStorageHouse.ProgressBarVisible = true;
-                        buildStorageHouse.ButtonVisible = false;
-                    }
-                }
-                else if (allResources.Wood < storageReqWood && buildStorageHouse.Progress == 0 || allResources.Stone < storageReqStone && buildStorageHouse.Progress == 0)
-                {
-                    buildStorageHouse.ButtonVisible = false;
-                    buildStorageHouse.RightVisible = true;
-                }
-            }
-            else
-            {
-                buildStorageHouse.RightContent = "Completed";
-                buildStorageHouse.RightVisible = true;
-                buildStorageHouse.ProgressBarVisible = false;
-                //storageGrid.Visibility = Visibility.Visible;
+                workGrid.Visibility = Visibility.Visible;
             }
 
             if (buildState == 5)
             {
-                allResources.Wood -= storageReqWood;
-                allResources.Stone -= storageReqStone;
+                allResources.Wood -= storageRoomReqWood;
+                allResources.Stone -= storageRoomReqStone;
                 InitializeInfo();
                 UpdateCanvas(currentType);
             }
             else if (buildState == 6)
             {
-                buildStorageHouse.ButtonVisible = false;
-                buildStorageHouse.ProgressBarVisible = false;
-                BuildingsBuilt.storageBuilt = true;
+                buildStorageRoom.ButtonVisible = false;
+                buildStorageRoom.ProgressBarVisible = false;
+                BuildingsBuilt.storageRoomBuilt = true;
                 UpdateCanvas(currentType);
-                AddResources(allResources, storageResources);
-                //storageTextBlock.Text = "*";
+                AddResources(allResources, storageRoomResources);
+                UpdateBuild();
             }
 
+            if (!BuildingsBuilt.storageRoomBuilt)
+            {
+                if (allResources.Wood >= storageRoomReqWood && allResources.Stone >= storageRoomReqStone)
+                {
+                    if (buildStorageRoom.Progress == 0)
+                    {
+                        buildStorageRoom.RightVisible = false;
+                        buildStorageRoom.ButtonVisible = true;
+                    }
+                    else if (buildStorageRoom.Progress > 0)
+                    {
+                        buildStorageRoom.ProgressBarVisible = true;
+                        buildStorageRoom.ButtonVisible = false;
+                    }
+                }
+                else if (allResources.Wood < storageRoomReqWood && buildStorageRoom.Progress == 0 || allResources.Stone < storageRoomReqStone && buildStorageRoom.Progress == 0)
+                {
+                    buildStorageRoom.ButtonVisible = false;
+                    buildStorageRoom.RightVisible = true;
+                }
+            }
+            else
+            {
+                buildStorageRoom.RightContent = "Completed";
+                buildStorageRoom.RightVisible = true;
+                buildStorageRoom.ProgressBarVisible = false;
+                buildStorageRoom.ButtonVisible = false;
+            }
 
-            (App.Current as App).BuildState = 0;
+            if (buildState == 7)
+            {
+                allResources.Wood -= storageReqWood;
+                allResources.Stone -= storageReqStone;
+                InitializeInfo();
+                UpdateCanvas(currentType);
+                Debug.WriteLine(buildState.ToString());
+            }
+            else if (buildState == 8)
+            {
+                buildKitchen.ButtonVisible = false;
+                buildKitchen.ProgressBarVisible = false;
+                BuildingsBuilt.kitchenBuilt = true;
+                UpdateCanvas(currentType);
+                AddResources(allResources, kitchenResources);
+                UpdateBuild();
+                Debug.WriteLine(buildState.ToString());
+            }
+
+            if (!BuildingsBuilt.kitchenBuilt)
+            {
+                if (allResources.Wood >= kitchenReqWood && allResources.Stone >= kitchenReqStone)
+                {
+                    if (buildKitchen.Progress == 0)
+                    {
+                        buildKitchen.RightVisible = false;
+                        buildKitchen.ButtonVisible = true;
+                    }
+                    else if (buildKitchen.Progress > 0)
+                    {
+                        buildKitchen.ProgressBarVisible = true;
+                        buildKitchen.ButtonVisible = false;
+                    }
+                }
+                else if (allResources.Wood < kitchenReqWood && buildKitchen.Progress == 0 || allResources.Stone < kitchenReqStone && buildKitchen.Progress == 0)
+                {
+                    buildKitchen.ButtonVisible = false;
+                    buildKitchen.RightVisible = true;
+                }
+            }
+            else
+            {
+                buildKitchen.RightContent = "Completed";
+                buildKitchen.RightVisible = true;
+                buildKitchen.ProgressBarVisible = false;
+                buildKitchen.ButtonVisible = false;
+            }
+
+            if (buildState == 9)
+            {
+                allResources.Wood -= roadToPlainsReqWood;
+                allResources.Stone -= roadToPlainsReqStone;
+                InitializeInfo();
+                UpdateCanvas(currentType);
+                Debug.WriteLine(buildState.ToString());
+            }
+            else if (buildState == 10)
+            {
+                buildRoadToPlains.ButtonVisible = false;
+                buildRoadToPlains.ProgressBarVisible = false;
+                BuildingsBuilt.plainsBuilt = true;
+                UpdateCanvas(currentType);
+                UpdateBuild();
+                Debug.WriteLine(buildState.ToString());
+            }
+
+            if (!BuildingsBuilt.plainsBuilt)
+            {
+                if (allResources.Wood >= roadToPlainsReqWood && allResources.Stone >= roadToPlainsReqStone)
+                {
+                    if (buildRoadToPlains.Progress == 0)
+                    {
+                        buildRoadToPlains.RightVisible = false;
+                        buildRoadToPlains.ButtonVisible = true;
+                    }
+                    else if (buildRoadToPlains.Progress > 0)
+                    {
+                        buildRoadToPlains.ProgressBarVisible = true;
+                        buildRoadToPlains.ButtonVisible = false;
+                    }
+                }
+                else if (allResources.Wood < roadToPlainsReqWood && buildRoadToPlains.Progress == 0 || allResources.Stone < roadToPlainsReqStone && buildRoadToPlains.Progress == 0)
+                {
+                    buildRoadToPlains.ButtonVisible = false;
+                    buildRoadToPlains.RightVisible = true;
+                }
+            }
+            else
+            {
+                buildRoadToPlains.RightContent = "Completed";
+                buildRoadToPlains.RightVisible = true;
+                buildRoadToPlains.ProgressBarVisible = false;
+                buildRoadToPlains.ButtonVisible = false;
+            }
+
+            if (buildState == 11)
+            {
+                allResources.Wood -= roadToMountainReqWood;
+                allResources.Stone -= roadToMountainReqStone;
+                InitializeInfo();
+                UpdateCanvas(currentType);
+                Debug.WriteLine(buildState.ToString());
+            }
+            else if (buildState == 12)
+            {
+                buildRoadToMountain.ButtonVisible = false;
+                buildRoadToMountain.ProgressBarVisible = false;
+                BuildingsBuilt.mountainBuilt = true;
+                UpdateCanvas(currentType);
+                UpdateBuild();
+                Debug.WriteLine(buildState.ToString());
+            }
+
+            if (!BuildingsBuilt.mountainBuilt)
+            {
+                if (allResources.Wood >= roadToMountainReqWood && allResources.Stone >= roadToMountainReqStone)
+                {
+                    if (buildRoadToMountain.Progress == 0)
+                    {
+                        buildRoadToMountain.RightVisible = false;
+                        buildRoadToMountain.ButtonVisible = true;
+                    }
+                    else if (buildRoadToMountain.Progress > 0)
+                    {
+                        buildRoadToMountain.ProgressBarVisible = true;
+                        buildRoadToMountain.ButtonVisible = false;
+                    }
+                }
+                else if (allResources.Wood < roadToMountainReqWood && buildRoadToMountain.Progress == 0 || allResources.Stone < roadToMountainReqStone && buildRoadToMountain.Progress == 0)
+                {
+                    buildRoadToMountain.ButtonVisible = false;
+                    buildRoadToMountain.RightVisible = true;
+                }
+            }
+            else
+            {
+                buildRoadToMountain.RightContent = "Completed";
+                buildRoadToMountain.RightVisible = true;
+                buildRoadToMountain.ProgressBarVisible = false;
+                buildRoadToMountain.ButtonVisible = false;
+            }
+
+            if (buildState == 13)
+            {
+                allResources.Wood -= roadToForestReqWood;
+                allResources.Stone -= roadToForestReqStone;
+                InitializeInfo();
+                UpdateCanvas(currentType);
+                Debug.WriteLine(buildState.ToString());
+            }
+            else if (buildState == 14)
+            {
+                buildRoadToForest.ButtonVisible = false;
+                buildRoadToForest.ProgressBarVisible = false;
+                BuildingsBuilt.forestBuilt = true;
+                UpdateCanvas(currentType);
+                UpdateBuild();
+                Debug.WriteLine(buildState.ToString());
+            }
+
+            if (!BuildingsBuilt.forestBuilt)
+            {
+                if (allResources.Wood >= roadToForestReqWood && allResources.Stone >= roadToForestReqStone)
+                {
+                    if (buildRoadToForest.Progress == 0)
+                    {
+                        buildRoadToForest.RightVisible = false;
+                        buildRoadToForest.ButtonVisible = true;
+                    }
+                    else if (buildRoadToForest.Progress > 0)
+                    {
+                        buildRoadToForest.ProgressBarVisible = true;
+                        buildRoadToForest.ButtonVisible = false;
+                    }
+                }
+                else if (allResources.Wood < roadToForestReqWood && buildRoadToForest.Progress == 0 || allResources.Stone < roadToForestReqStone && buildRoadToForest.Progress == 0)
+                {
+                    buildRoadToForest.ButtonVisible = false;
+                    buildRoadToForest.RightVisible = true;
+                }
+            }
+            else
+            {
+                buildRoadToForest.RightContent = "Completed";
+                buildRoadToForest.RightVisible = true;
+                buildRoadToForest.ProgressBarVisible = false;
+                buildRoadToForest.ButtonVisible = false;
+            }
+
+            UpdateBuild();
+            
+            if ((App.Current as App).BuildState != 0)
+            {
+                (App.Current as App).BuildState = 0;
+                buildState = 0;
+                CheckBuildState();
+            }
         }
 
         private void InitializeInfo()
@@ -462,9 +670,9 @@ namespace tehRojekti
             buildWorkshop = new BuildLine { LeftContent = "Workshop", ButtonContent = "[" + workReqWood + "w , " + workReqStone + "s]", RightContent = "[" + workReqWood + "w , " + workReqStone + "s]", ProgressSpeed = 55 };
             buildStorageRoom = new BuildLine { LeftContent = "Storage Room", ButtonContent = "[" + storageRoomReqStone + "w , " + storageRoomReqStone + "s]", RightContent = "[" + storageRoomReqWood + "w , " + storageRoomReqStone + "s]", ProgressSpeed = 55 };
             buildKitchen = new BuildLine { LeftContent = "Kitchen", ButtonContent = "[" + kitchenReqWood + "w , " + kitchenReqStone + "s]", RightContent = "[" + kitchenReqWood + "w , " + kitchenReqStone + "s]", ProgressSpeed = 50 };
-            buildRoadToForest = new BuildLine { LeftContent = "Road: Forest", ButtonContent = "[" + roadToForestReqWood + "w , " + roadToForestReqStone + "s]", RightContent = "[" + roadToForestReqWood + "w , " + roadToForestReqStone + "s]", ProgressSpeed = 55 };
-            buildRoadToMountain = new BuildLine { LeftContent = "Road: Mountain", ButtonContent = "[" + roadToMountainReqWood + "w , " + roadToMountainReqStone + "s]", RightContent = "[" + roadToMountainReqWood + "w , " + roadToMountainReqStone + "s]", ProgressSpeed = 55 };
             buildRoadToPlains = new BuildLine { LeftContent = "Road: Plains", ButtonContent = "[" + roadToPlainsReqWood + "w , " + roadToPlainsReqStone + "s]", RightContent = "[" + roadToPlainsReqWood + "w , " + roadToPlainsReqStone + "s]", ProgressSpeed = 55 };
+            buildRoadToMountain = new BuildLine { LeftContent = "Road: Mountain", ButtonContent = "[" + roadToMountainReqWood + "w , " + roadToMountainReqStone + "s]", RightContent = "[" + roadToMountainReqWood + "w , " + roadToMountainReqStone + "s]", ProgressSpeed = 55 };
+            buildRoadToForest = new BuildLine { LeftContent = "Road: Forest", ButtonContent = "[" + roadToForestReqWood + "w , " + roadToForestReqStone + "s]", RightContent = "[" + roadToForestReqWood + "w , " + roadToForestReqStone + "s]", ProgressSpeed = 55 };
             buildStorageHouse = new BuildLine { LeftContent = "Storage House", ButtonContent = "[" + storageReqWood + "w , " + storageReqStone + "s]", RightContent = "[" + mineReqWood + "w , " + mineReqStone + "s]", ProgressSpeed = 50 };
             buildSilo = new BuildLine { LeftContent = "Silo", ButtonContent = "[" + siloReqWood + "w , " + siloReqStone + "s]", RightContent = "[" + siloReqWood + "w , " + siloReqStone + "s]", ProgressSpeed = 50 };
             buildFarm = new BuildLine { LeftContent = "Farm", ButtonContent = "[" + farmReqWood + "w , " + farmReqStone + "s]", RightContent = "[" + farmReqWood + "w , " + farmReqStone + "s]", ProgressSpeed = 55 };
@@ -474,6 +682,7 @@ namespace tehRojekti
             buildTradingHouse = new BuildLine { LeftContent = "Trading House", ButtonContent = "[" + tradeReqWood + "w , " + tradeReqStone + "s]", RightContent = "[" + tradeReqWood + "w , " + tradeReqStone + "s]", ProgressSpeed = 50 };
             buildTradeRoute = new BuildLine { LeftContent = "Trade Route", ButtonContent = "[" + tradeRouteReqWood + "w , " + tradeRouteReqStone + "s]", RightContent = "[" + tradeRouteReqWood + "w , " + tradeRouteReqStone + "s]", ProgressSpeed = 50 };
             buildTools = new BuildLine { LeftContent = "Tools", ButtonContent = "[" + toolsReqWood + "w , " + toolsReqStone + "s]", RightContent = "[" + toolsReqWood + "w , " + toolsReqStone + "s]", ProgressSpeed = 50 };
+            buildExplore = new BuildLine { LeftContent = "Explore World", ButtonContent = "Explore", RightContent = "Explore", ProgressSpeed = 50 };
 
             homeBuildTitle = new BuildLine { MiddleContent = "Home" };
             yardTitle = new BuildLine { MiddleContent = "Yard" };
@@ -483,6 +692,7 @@ namespace tehRojekti
             lumberTitle = new BuildLine { MiddleContent = "Lumber House" };
 
             availableBuild = new BuildLine { MiddleContent = "Available" };
+            blankBuild = new BuildLine();
             completedBuild = new BuildLine { MiddleContent = "Completed" };
 
             UpdateBuild();
@@ -496,6 +706,7 @@ namespace tehRojekti
 
 
             HomeBuild.Add(homeBuildTitle);
+            HomeBuild.Add(blankBuild);
             HomeBuild.Add(availableBuild);
             if (!BuildingsBuilt.yardBuilt)
             {
@@ -505,6 +716,11 @@ namespace tehRojekti
             {
                 HomeBuild.Add(buildKitchen);
             }
+            if (BuildingsBuilt.workshopBuilt && !BuildingsBuilt.storageRoomBuilt)
+            {
+                HomeBuild.Add(buildStorageRoom);
+            }
+            HomeBuild.Add(blankBuild);
             HomeBuild.Add(completedBuild);
             if (BuildingsBuilt.yardBuilt)
             {
@@ -514,9 +730,13 @@ namespace tehRojekti
             {
                 HomeBuild.Add(buildKitchen);
             }
-
+            if (BuildingsBuilt.storageRoomBuilt)
+            {
+                HomeBuild.Add(buildStorageRoom);
+            }
 
             YardBuild.Add(yardTitle);
+            YardBuild.Add(blankBuild);
             YardBuild.Add(availableBuild);
             if (!BuildingsBuilt.workshopBuilt)
             {
@@ -548,8 +768,24 @@ namespace tehRojekti
                 {
                     YardBuild.Add(buildLumberHouse);
                 }
+                if (!BuildingsBuilt.siloBuilt)
+                {
+                    YardBuild.Add(buildSilo);
+                }
+                if (!BuildingsBuilt.storageBuilt)
+                {
+                    YardBuild.Add(buildStorageHouse);
+                }
+                if (BuildingsBuilt.villageBuilt && !BuildingsBuilt.tradeBuilt)
+                {
+                    YardBuild.Add(buildTradingHouse);
+                }
+                if (BuildingsBuilt.tradeBuilt && !BuildingsBuilt.tradeRouteBuilt)
+                {
+                    YardBuild.Add(buildTradeRoute);
+                }
             }
-
+            YardBuild.Add(blankBuild);
             YardBuild.Add(completedBuild);
             if (BuildingsBuilt.workshopBuilt)
             {
@@ -579,6 +815,31 @@ namespace tehRojekti
             {
                 YardBuild.Add(buildLumberHouse);
             }
+            if (BuildingsBuilt.lumberBuilt)
+            {
+                YardBuild.Add(buildLumberHouse);
+            }
+            if (BuildingsBuilt.siloBuilt)
+            {
+                YardBuild.Add(buildSilo);
+            }
+            if (BuildingsBuilt.storageBuilt)
+            {
+                YardBuild.Add(buildStorageHouse);
+            }
+            if (BuildingsBuilt.tradeBuilt)
+            {
+                YardBuild.Add(buildTradingHouse);
+            }
+            if (BuildingsBuilt.tradeRouteBuilt)
+            {
+                YardBuild.Add(buildTradeRoute);
+            }
+
+            WorkshopBuild.Add(workshopTitle);
+            WorkshopBuild.Add(blankBuild);
+            WorkshopBuild.Add(availableBuild);
+            WorkshopBuild.Add(buildTools);
         }
 
         private void InitializeResources()
@@ -682,7 +943,6 @@ namespace tehRojekti
             AddResources(allResources, homeResources);
         }
         
-
         public void UpdateCanvas(bool type)
         {
             SideCanvas.Children.Clear();
@@ -703,6 +963,14 @@ namespace tehRojekti
                     line.UpdateInfo();
                     SideCanvas.Children.Add(line);
                     linePos++;
+                    if(linePos > 15)
+                    {
+                        CanvasScroller.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
+                    }
+                    else
+                    {
+                        CanvasScroller.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
+                    }
                 }
             }
             else
@@ -867,6 +1135,32 @@ namespace tehRojekti
             }
 
             storageTextBlock.Text = "";
+
+            UpdateCanvas(currentType);
+        }
+
+        private void siloGrid_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if(currentInfo != SiloInfo)
+            {
+                currentInfo = SiloInfo;
+                currentBuild = SiloBuild;
+            }
+
+            siloTextBlock.Text = "";
+
+            UpdateCanvas(currentType);
+        }
+
+        private void tradingGrid_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if(currentInfo != TradingInfo)
+            {
+                currentInfo = TradingInfo;
+                currentBuild = TradingBuild;
+            }
+
+            tradingTextBlock.Text = "";
 
             UpdateCanvas(currentType);
         }
