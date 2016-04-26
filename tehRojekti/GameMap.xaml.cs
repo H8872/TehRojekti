@@ -65,7 +65,7 @@ namespace tehRojekti
         InfoLine food = new InfoLine {};
         InfoLine homeTitle = new InfoLine {};
         
-        BuildLine buildYard = new BuildLine { LeftContent = "Yard", ButtonContent = "[5w , 5s]", RightContent = "[5w , 5s]" };
+        BuildLine buildYard = new BuildLine {};
 
         public GameMap()
         {
@@ -159,8 +159,9 @@ namespace tehRojekti
             }
             if(buildState == 1)
             {
-                allResources.Wood -= 5;
-                allResources.Stone -= 5;
+                allResources.Wood = allResources.Wood - 5;
+                allResources.Stone = allResources.Stone - 5;
+                InitializeInfo();
             }
             else if(buildState == 2)
             {
@@ -214,7 +215,7 @@ namespace tehRojekti
 
         private void InitializeBuild()
         {
-            buildYard = new BuildLine { LeftContent = "Yard", ButtonContent = "[5w , 5s]" , RightContent = "[5w , 5s]" , ProgressSpeed = 10};
+            buildYard = new BuildLine { LeftContent = "Yard", ButtonContent = "[5w , 5s]" , RightContent = "[5w , 5s]" , ProgressSpeed = 1};
 
             BuildLine homeTitle = new BuildLine { MiddleContent = "Home" };
             HomeBuild.Add(homeTitle);
