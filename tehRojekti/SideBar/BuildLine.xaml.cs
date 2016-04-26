@@ -64,14 +64,11 @@ namespace tehRojekti.SideBar
             MiddleContent = "";
             RightContent = "";
             ButtonContent = "";
-            //RightVisible = true;
-            //ButtonVisible = false;
-            //ProgressBarVisible = false;
-            ProgressSpeed = 0;
-            progressBar.Maximum = 100;
+            ProgressSpeed = 0;                              // Progress happens every half second, speed indicates how much progress is done in that time
+            progressBar.Maximum = maxProgress;              // to reach max, now 100 so progress speed is like percents per half second c:
             (App.Current as App).BuildOrder++;
-            buildOrder = (App.Current as App).BuildOrder;
-            (App.Current as App).BuildOrder++;
+            buildOrder = (App.Current as App).BuildOrder;   // Build order == 1 for starting building and 2 for compliting
+            (App.Current as App).BuildOrder++;              // And is determinated in inizializing build
 
             timer.Interval = new TimeSpan(0, 0, 0, 0, 500);
             timer.Tick += Timer_Tick;
@@ -91,7 +88,7 @@ namespace tehRojekti.SideBar
             button.Content = ButtonContent;
             SetValue(Canvas.TopProperty, LocationY);
 
-            if (MiddleContent != "")
+            if (MiddleContent != "")                                                //If theres stuff in middle, everything else is empty by default otherwise its hidden
             {
                 progressBar.Visibility = Visibility.Collapsed;
                 button.Visibility = Visibility.Collapsed;
@@ -134,14 +131,12 @@ namespace tehRojekti.SideBar
         public void ProgressUpdate()
         {
             progressBar.Value = Progress;
-            if (Progress >= 100)
+            if (Progress >= 100)                                    // When progress reaches 100 or over timer stops and tells to game page
             {
                 timer.Stop();
                 RightContent = "Completed";
-                ProgressBarVisible = false;
-                ButtonVisible = false;
-                RightVisible = true;
-                Progress = 100;
+                Progress = 0;
+                progressBar.Value = 0;
                 (App.Current as App).BuildState = buildOrder + 1;
                 UpdateInfo();
                 Debug.WriteLine(buildOrder.ToString());
