@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -27,9 +28,28 @@ namespace tehRojekti.SideBar
         public bool RightVisible { get; set; }
         public bool ButtonVisible { get; set; }
         public bool ProgressBarVisible { get; set; }
-        public double Progress { get; set; }
+        private double maxProgress = 100;
+        private double progress;
+        public double Progress
+        {
+            get
+            {
+                return progress;
+            }
+            set
+            {
+                if (value >= maxProgress)
+                {
+                    progress = maxProgress;
+                }
+                else
+                {
+                    progress = value;
+                }
+            }
+        }
         public double ProgressSpeed { get; set; }
-        public int BuildOrder { get; set; }
+        public int buildOrder { get; set; }
         public int Building { get; set; }
 
         public int LocationY { get; set; }
@@ -50,10 +70,10 @@ namespace tehRojekti.SideBar
             ProgressSpeed = 0;
             progressBar.Maximum = 100;
             (App.Current as App).BuildOrder++;
-            BuildOrder = (App.Current as App).BuildOrder;
+            buildOrder = (App.Current as App).BuildOrder;
             (App.Current as App).BuildOrder++;
 
-            timer.Interval = new TimeSpan(0, 0, 0, 0, 1000 / 60);
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 500);
             timer.Tick += Timer_Tick;
         }
 
@@ -69,10 +89,10 @@ namespace tehRojekti.SideBar
             middle.Text = MiddleContent;
             right.Text = RightContent;
             button.Content = ButtonContent;
+            SetValue(Canvas.TopProperty, LocationY);
 
             if (MiddleContent != "")
             {
-                SetValue(Canvas.TopProperty, LocationY);
                 progressBar.Visibility = Visibility.Collapsed;
                 button.Visibility = Visibility.Collapsed;
                 left.Visibility = Visibility.Collapsed;
@@ -81,7 +101,6 @@ namespace tehRojekti.SideBar
             else
             {
                 middle.Visibility = Visibility.Collapsed;
-                SetValue(Canvas.TopProperty, LocationY);
             }
 
             if (RightVisible)
@@ -118,23 +137,26 @@ namespace tehRojekti.SideBar
             if (Progress >= 100)
             {
                 timer.Stop();
-                ProgressBarVisible = false;
                 RightContent = "Completed";
-                right.Text = "Completed";
+                ProgressBarVisible = false;
+                ButtonVisible = false;
                 RightVisible = true;
                 Progress = 100;
-                (App.Current as App).BuildState = BuildOrder + 1;
+                (App.Current as App).BuildState = buildOrder + 1;
                 UpdateInfo();
+                Debug.WriteLine(buildOrder.ToString());
             }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             timer.Start();
-            (App.Current as App).BuildState = BuildOrder;
+            (App.Current as App).BuildState = buildOrder;
+            Progress++;
             ButtonVisible = false;
             ProgressBarVisible = true;
             UpdateInfo();
+            Debug.WriteLine(buildOrder.ToString());
         }
     }
 }

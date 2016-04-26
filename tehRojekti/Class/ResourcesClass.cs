@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace tehRojekti.Class
 {
-    class ResourcesClass
+    public class ResourcesClass
     {
+        public int Building { get; set; }
         public int maxFood { get; set; }
-        private int food = 10;
+        private int food;
+        private int i=0;
         public int Food
         {
             get
@@ -18,16 +20,25 @@ namespace tehRojekti.Class
             }
             set
             {
-                if (food + value > maxFood)
+                if (i < 3)
                 {
-                    food = maxFood;
+                    food = value;
+                    i++;
                 }
-                else food += value;
+                else
+                {
+                    if (value >= maxFood)
+                    {
+                        food = maxFood;
+                    }
+                    else food = value;
+                }
+                
             }
         }
 
         public int maxWood { get; set; }
-        private int wood = 10;
+        private int wood;
         public int Wood
         {
             get
@@ -36,16 +47,24 @@ namespace tehRojekti.Class
             }
             set
             {
-                if (wood + value > maxWood)
+                if (i < 3)
                 {
-                    wood = maxWood;
+                    wood = value;
+                    i++;
                 }
-                else wood += value;
+                else
+                {
+                    if (value >= maxWood)
+                    {
+                        wood = maxWood;
+                    }
+                    else wood = value;
+                }
             }
         }
 
         public int maxStone { get; set; }
-        private int stone = 10;
+        private int stone;
         public int Stone
         {
             get
@@ -54,11 +73,19 @@ namespace tehRojekti.Class
             }
             set
             {
-                if (stone + value > maxStone)
+                if (i < 3)
                 {
-                    stone = maxStone;
+                    stone = value;
+                    i++;
                 }
-                else stone += value;
+                else
+                {
+                    if (value >= maxStone)
+                    {
+                        stone = maxStone;
+                    }
+                    else stone = value;
+                }
             }
         }
     }

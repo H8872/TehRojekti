@@ -33,6 +33,9 @@ namespace tehRojekti
         public MainPage()
         {
             this.InitializeComponent();
+            
+            (App.Current as App).BuildOrder = 0;
+            (App.Current as App).BuildState = 0;
 
             ApplicationView.PreferredLaunchViewSize = new Size(800, 600);
             ApplicationView.PreferredLaunchWindowingMode
@@ -63,7 +66,9 @@ namespace tehRojekti
         private async void OptionsButton_Click(object sender, RoutedEventArgs e)
         {
             StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
-            StorageFile saveFile = await storageFolder.CreateFileAsync("save.dat", CreationCollisionOption.ReplaceExisting);
+            StorageFile saveFile = await storageFolder.CreateFileAsync("BuildingsBuilt.xml", CreationCollisionOption.ReplaceExisting);
+            await saveFile.DeleteAsync(StorageDeleteOption.Default);
+            saveFile = await storageFolder.CreateFileAsync("Resources.xml", CreationCollisionOption.ReplaceExisting);
             Debug.WriteLine(saveFile.Path);
             await saveFile.DeleteAsync(StorageDeleteOption.Default);
         }
