@@ -24,10 +24,11 @@ namespace tehRojekti.Class
         public bool villageBuilt { get; set; }
         public bool tradeBuilt { get; set; }
         public bool tradeRouteBuilt { get; set; }
+        public bool bookFound { get; set; }
 
-        public void BuildingBuiltClass()
+        public void BuildingBuiltClass()                    // This class stores all the stuff thats build.... well not all... but buildings yea~
         {
-            homeBuilt = true;
+            homeBuilt = true;                               // Only home is built by default
             yardBuilt = false;
             storageRoomBuilt = false;
             kitchenBuilt = false;
@@ -42,6 +43,7 @@ namespace tehRojekti.Class
             villageBuilt = false;
             tradeBuilt = false;
             tradeRouteBuilt = false;
+            bookFound = false;
         }
     }
 }

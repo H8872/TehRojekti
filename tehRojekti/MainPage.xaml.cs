@@ -34,10 +34,12 @@ namespace tehRojekti
         {
             this.InitializeComponent();
             
+            // This is for ResourcesClasses, so has to be nulled here
             (App.Current as App).BuildOrder = 0;
+            // these are attributes that get info from BuildLines to GamePage and where needed so they are nulled here
             (App.Current as App).BuildState = 0;
 
-            ApplicationView.PreferredLaunchViewSize = new Size(800, 600);
+            ApplicationView.PreferredLaunchViewSize = new Size(1000, 800);
             ApplicationView.PreferredLaunchWindowingMode
                 = ApplicationViewWindowingMode.PreferredLaunchViewSize;
 
@@ -48,7 +50,7 @@ namespace tehRojekti
         {
             try
             {
-                // add and navigate to a new page
+                // add and navigate to a Game page
                 this.Frame.Navigate(typeof(GameMap));
             }
             catch (Exception ex)
@@ -65,6 +67,8 @@ namespace tehRojekti
 
         private async void OptionsButton_Click(object sender, RoutedEventArgs e)
         {
+            // Functions as Delete save for now
+
             StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
             StorageFile saveFile = await storageFolder.CreateFileAsync("BuildingsBuilt.xml", CreationCollisionOption.ReplaceExisting);
             await saveFile.DeleteAsync(StorageDeleteOption.Default);

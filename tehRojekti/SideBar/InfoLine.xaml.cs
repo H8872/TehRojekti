@@ -27,8 +27,8 @@ namespace tehRojekti.SideBar
 
         public InfoLine()
         {
-            this.InitializeComponent();
-
+            this.InitializeComponent();                     // This is pretty much like BuildLine, so check that....
+                                                            // This just has a bit less stuff... Like Progress bar and button...
             LeftContent = "";
             MiddleContent = "";
             RightContent = "";
@@ -39,15 +39,7 @@ namespace tehRojekti.SideBar
             Left.Text = LeftContent;
             Middle.Text = MiddleContent;
             Right.Text = RightContent;
-
-            if (MiddleContent != "")
-            {
-                SetValue(Canvas.TopProperty, LocationY);
-            }
-            else
-            {
-                SetValue(Canvas.TopProperty, LocationY);
-            }
+            SetValue(Canvas.TopProperty, LocationY);
         }
     }
 }

@@ -36,11 +36,9 @@
 
                 </StackPanel>
             </StackPanel>
-            <ScrollViewer x:Name="CanvasScroller" Grid.Row="4" HorizontalAlignment="Center" Width="275" Height="640" VerticalScrollMode="Auto">
-                    <Canvas x:Name="SideCanvas" HorizontalAlignment="Center" Width="275"/>
+            <ScrollViewer x:Name="CanvasScroller" Grid.Row="4" HorizontalAlignment="Center" Height="640" Width="288" Margin="13,0,0,0">
+                <Canvas x:Name="SideCanvas" Grid.Row="4" HorizontalAlignment="Left" VerticalAlignment="Top" Width="275" Height="30"/>
             </ScrollViewer>
-            
-            
         </Grid>
         
         <Grid Grid.Column="2" Margin="15" Grid.ColumnSpan="2">

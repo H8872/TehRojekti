@@ -20,7 +20,7 @@ namespace tehRojekti.Class
             }
             set
             {
-                if (i < 3)
+                if (i < 3)  // Number of different resources with max amount~~  Saving/Loading foops up so this goes around that issue
                 {
                     food = value;
                     i++;

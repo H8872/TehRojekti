@@ -30,6 +30,8 @@ namespace tehRojekti
     {
         int linePos;
 
+        Random rand = new Random();
+
         DispatcherTimer timer = new DispatcherTimer();
         DispatcherTimer CheckBuildStateTimer = new DispatcherTimer();
 
@@ -107,6 +109,7 @@ namespace tehRojekti
         private int tradeRouteReqStone = 1;
         private int toolsReqWood = 1;
         private int toolsReqStone = 1;
+        private int exploreReqFood = 1;
         private int buildState;
         //private int buildingNow;
         //private int buildingOrder;
@@ -134,6 +137,9 @@ namespace tehRojekti
         BuildLine buildTradeRoute; // 29 30
         BuildLine buildTools; // 31 32
         BuildLine buildExplore; // 33 34
+        BuildLine doGather; // 35 36
+        BuildLine doMine; // 37 38
+        BuildLine doCut; // 39 40
 
         BuildLine homeBuildTitle;
         BuildLine yardTitle;
@@ -172,7 +178,7 @@ namespace tehRojekti
             CheckBuildState();
         }
 
-        private async void ReadSave()
+        private async void ReadSave() // Title tells
         {
             try
             {
@@ -197,7 +203,7 @@ namespace tehRojekti
                     listResources = (List<ResourcesClass>)ResourcesSerializer.ReadObject(ResourceStream);
                     foreach (ResourcesClass ai in listResources)
                     {
-                        switch (ai.Building)
+                        switch (ai.Building)            // relevant numbers told on top while defining ResourcesClasses
                         {
                             case 0:
                                 allResources = ai;
@@ -215,7 +221,37 @@ namespace tehRojekti
                                 workResources = ai;
                                 break;
                                 
-                            //case 4:
+                            case 4:
+                                storageRoomResources = ai;
+                                break;
+
+                            case 5:
+                                kitchenResources = ai;
+                                break;
+
+                            case 6:
+                                storageResources = ai;
+                                break;
+
+                            case 7:
+                                siloResources = ai;
+                                break;
+
+                            case 8:
+                                farmResources = ai;
+                                break;
+
+                            case 9:
+                                mineResources = ai;
+                                break;
+
+                            case 10:
+                                lumberResources = ai;
+                                break;
+
+                            case 11:
+                                tradeResources = ai;
+                                break;
 
                             default:
                                 Debug.WriteLine(ai.Building.ToString());
@@ -233,11 +269,12 @@ namespace tehRojekti
 
         private void Timer_Tick(object sender, object e)
         {
-            buildState = (App.Current as App).BuildState;
+            buildState = (App.Current as App).BuildState;   //Has build state changed?
 
-            if (buildState != 0)
+            if (buildState != 0)                            //If it has, do stuff that lags if done constantly
             {
                 CheckBuildState();
+                UpdateCanvas(currentType);
             }
 
             UpdateBuild();
@@ -249,39 +286,37 @@ namespace tehRojekti
             }
         }
 
-        ResourcesClass AddResources(ResourcesClass a, ResourcesClass b)
+        ResourcesClass AddResources(ResourcesClass AddTo, ResourcesClass BeingAdded) // simple math thingy that adds ResourcesClasses together...
         {
-            a.maxWood = a.maxWood + b.maxWood;
-            a.maxStone += b.maxStone;
-            a.maxFood += b.maxFood;
-            a.Wood = a.Wood + b.Wood;
-            a.Stone += b.Stone;
-            a.Food += b.Food;
-            return a;
+            AddTo.maxWood += BeingAdded.maxWood;
+            AddTo.maxStone += BeingAdded.maxStone;
+            AddTo.maxFood += BeingAdded.maxFood;
+            AddTo.Wood += BeingAdded.Wood;
+            AddTo.Stone += BeingAdded.Stone;
+            AddTo.Food += BeingAdded.Food;
+            return AddTo;
         }
 
-        private void CheckBuildState()
+        private void CheckBuildState() // Checks build states, like is it done or started
         {
-            /* Build states:
-            1 = building yard                   17 = building silo                  33 = 
-            2 = yard complete                   18 = silo complete                  34 = 
-            3 = building workshop               19 = building farm                  35 = 
-            4 = workshop complete               20 = farm complete                  36 = 
-            5 = building storage                21 = building mine                  37 = 
-            6 = storage complete                22 = mine complete                  38 = 
-            7 = building kitchen                23 = building lumber house          39 =
-            8 = kitchen complete                24 = lumber house complete          40 =
-            9 = building road to plains         25 = building road to village       41 =
-            10 = road to plains complete        26 = road to village complete       42 = 
-            11 = building road to mountain      27 = building Trading House
+            /* Build states: (used below)
+            1 = building yard                   17 = building silo                  33 = building actually just exploring
+            2 = yard complete                   18 = silo complete                  34 = exploring complete
+            3 = building workshop               19 = building farm                  35 = Gather Food
+            4 = workshop complete               20 = farm complete                  36 = Gathering complete
+            5 = building storage                21 = building mine                  37 = mine stone
+            6 = storage complete                22 = mine complete                  38 = mining complete
+            7 = building kitchen                23 = building lumber house          39 = cutting wood
+            8 = kitchen complete                24 = lumber house complete          40 = cutting complete
+            9 = building road to plains         25 = building road to village       41 = building
+            10 = road to plains complete        26 = road to village complete       42 =  complete
+            11 = building road to mountain      27 = building Trading House             ^thats how stuff continues^
             12 = road to mountain complete      28 = trading house complete
             13 = building road to forest        29 = building trade route
             14 = road to forest complete        30 = trade route complete
             15 = building storage house         31 = building tools
             16 = storage house complete         32 = tools complete
             */
-            //buildState = (App.Current as App).BuildState;
-            //buildingOrder = (App.Current as App).BuildOrder;
 
             if (buildState == 1)
             {
@@ -292,6 +327,7 @@ namespace tehRojekti
             }
             else if (buildState == 2)
             {
+                buildYard.RightVisible = true;
                 buildYard.ButtonVisible = false;
                 buildYard.ProgressBarVisible = false;
                 BuildingsBuilt.yardBuilt = true;
@@ -342,6 +378,7 @@ namespace tehRojekti
             }
             else if (buildState == 4)
             {
+                buildWorkshop.RightVisible = true;
                 buildWorkshop.ButtonVisible = false;
                 buildWorkshop.ProgressBarVisible = false;
                 BuildingsBuilt.workshopBuilt = true;
@@ -390,6 +427,7 @@ namespace tehRojekti
             }
             else if (buildState == 6)
             {
+                buildStorageRoom.RightVisible = true;
                 buildStorageRoom.ButtonVisible = false;
                 buildStorageRoom.ProgressBarVisible = false;
                 BuildingsBuilt.storageRoomBuilt = true;
@@ -437,6 +475,7 @@ namespace tehRojekti
             }
             else if (buildState == 8)
             {
+                buildKitchen.RightVisible = true;
                 buildKitchen.ButtonVisible = false;
                 buildKitchen.ProgressBarVisible = false;
                 BuildingsBuilt.kitchenBuilt = true;
@@ -485,6 +524,7 @@ namespace tehRojekti
             }
             else if (buildState == 10)
             {
+                buildRoadToPlains.RightVisible = true;
                 buildRoadToPlains.ButtonVisible = false;
                 buildRoadToPlains.ProgressBarVisible = false;
                 BuildingsBuilt.plainsBuilt = true;
@@ -532,6 +572,7 @@ namespace tehRojekti
             }
             else if (buildState == 12)
             {
+                buildRoadToMountain.RightVisible = true;
                 buildRoadToMountain.ButtonVisible = false;
                 buildRoadToMountain.ProgressBarVisible = false;
                 BuildingsBuilt.mountainBuilt = true;
@@ -579,6 +620,7 @@ namespace tehRojekti
             }
             else if (buildState == 14)
             {
+                buildRoadToForest.RightVisible = true;
                 buildRoadToForest.ButtonVisible = false;
                 buildRoadToForest.ProgressBarVisible = false;
                 BuildingsBuilt.forestBuilt = true;
@@ -616,55 +658,646 @@ namespace tehRojekti
                 buildRoadToForest.ButtonVisible = false;
             }
 
-            UpdateBuild();
-            
+            if (buildState == 15)
+            {
+                allResources.Wood -= storageReqWood;
+                allResources.Stone -= storageReqStone;
+                InitializeInfo();
+                UpdateCanvas(currentType);
+                Debug.WriteLine(buildState.ToString());
+            }
+            else if (buildState == 16)
+            {
+                buildStorageHouse.RightVisible = true;
+                buildStorageHouse.ButtonVisible = false;
+                buildStorageHouse.ProgressBarVisible = false;
+                BuildingsBuilt.storageBuilt = true;
+                UpdateCanvas(currentType);
+                AddResources(allResources, storageResources);
+                storageTextBlock.Text = "*";
+                UpdateBuild();
+                Debug.WriteLine(buildState.ToString());
+            }
+
+            if (!BuildingsBuilt.storageBuilt)
+            {
+                if (allResources.Wood >= storageReqWood && allResources.Stone >= storageReqStone)
+                {
+                    if (buildStorageHouse.Progress == 0)
+                    {
+                        buildStorageHouse.RightVisible = false;
+                        buildStorageHouse.ButtonVisible = true;
+                    }
+                    else if (buildStorageHouse.Progress > 0)
+                    {
+                        buildStorageHouse.ProgressBarVisible = true;
+                        buildStorageHouse.ButtonVisible = false;
+                    }
+                }
+                else if (allResources.Wood < storageReqWood && buildStorageHouse.Progress == 0 || allResources.Stone < storageReqStone && buildStorageHouse.Progress == 0)
+                {
+                    buildStorageHouse.ButtonVisible = false;
+                    buildStorageHouse.RightVisible = true;
+                }
+            }
+            else
+            {
+                buildStorageHouse.RightContent = "Completed";
+                buildStorageHouse.RightVisible = true;
+                buildStorageHouse.ProgressBarVisible = false;
+                buildStorageHouse.ButtonVisible = false;
+                storageGrid.Visibility = Visibility.Visible;
+            }
+
+            if (buildState == 17)
+            {
+                allResources.Wood -= siloReqWood;
+                allResources.Stone -= siloReqStone;
+                InitializeInfo();
+                Debug.WriteLine(buildState.ToString());
+            }
+            else if (buildState == 18)
+            {
+                buildSilo.RightVisible = true;
+                buildSilo.ButtonVisible = false;
+                buildSilo.ProgressBarVisible = false;
+                BuildingsBuilt.siloBuilt = true;
+                InitializeInfo();
+                UpdateCanvas(currentType);
+                AddResources(allResources, siloResources);
+                yardTextBlock.Text = "*";
+                UpdateBuild();
+                Debug.WriteLine(buildState.ToString());
+            }
+
+            if (!BuildingsBuilt.siloBuilt)
+            {
+                if (allResources.Wood >= siloReqWood && allResources.Stone >= siloReqStone && buildSilo.Progress == 0)
+                {
+                    if (buildSilo.Progress == 0)
+                    {
+                        buildSilo.RightVisible = false;
+                        buildSilo.ButtonVisible = true;
+                    }
+                    else if (buildSilo.Progress > 0)
+                    {
+                        buildSilo.ProgressBarVisible = true;
+                        buildSilo.ButtonVisible = false;
+                    }
+                }
+                else if (allResources.Stone < siloReqStone && buildSilo.Progress == 0 || allResources.Wood < siloReqWood && buildSilo.Progress == 0)
+                {
+                    buildSilo.RightVisible = true;
+                    buildSilo.ButtonVisible = false;
+                }
+            }
+            else
+            {
+                buildSilo.RightContent = "Completed";
+                buildSilo.RightVisible = true;
+                buildSilo.ProgressBarVisible = false;
+                buildSilo.ButtonVisible = false;
+                siloGrid.Visibility = Visibility.Visible;
+            }
+
+            if (buildState == 19)
+            {
+                allResources.Wood -= farmReqWood;
+                allResources.Stone -= farmReqStone;
+                InitializeInfo();
+                Debug.WriteLine(buildState.ToString());
+            }
+            else if (buildState == 20)
+            {
+                buildFarm.RightVisible = true;
+                buildFarm.ButtonVisible = false;
+                buildFarm.ProgressBarVisible = false;
+                BuildingsBuilt.farmBuilt = true;
+                InitializeInfo();
+                UpdateCanvas(currentType);
+                AddResources(allResources, farmResources);
+                farmTextBlock.Text = "*";
+                UpdateBuild();
+                Debug.WriteLine(buildState.ToString());
+            }
+
+            if (!BuildingsBuilt.farmBuilt)
+            {
+                if (allResources.Wood >= farmReqWood && allResources.Stone >= farmReqStone && buildFarm.Progress == 0)
+                {
+                    if (buildFarm.Progress == 0)
+                    {
+                        buildFarm.RightVisible = false;
+                        buildFarm.ButtonVisible = true;
+                    }
+                    else if (buildFarm.Progress > 0)
+                    {
+                        buildFarm.ProgressBarVisible = true;
+                        buildFarm.ButtonVisible = false;
+                    }
+                }
+                else if (allResources.Stone < farmReqStone && buildFarm.Progress == 0 || allResources.Wood < farmReqWood && buildFarm.Progress == 0)
+                {
+                    buildFarm.RightVisible = true;
+                    buildFarm.ButtonVisible = false;
+                }
+            }
+            else
+            {
+                buildFarm.RightContent = "Completed";
+                buildFarm.RightVisible = true;
+                buildFarm.ProgressBarVisible = false;
+                buildFarm.ButtonVisible = false;
+                farmGrid.Visibility = Visibility.Visible;
+            }
+
+            if (buildState == 21)
+            {
+                allResources.Wood -= mineReqWood;
+                allResources.Stone -= mineReqStone;
+                InitializeInfo();
+                Debug.WriteLine(buildState.ToString());
+            }
+            else if (buildState == 22)
+            {
+                buildMine.RightVisible = true;
+                buildMine.ButtonVisible = false;
+                buildMine.ProgressBarVisible = false;
+                BuildingsBuilt.mineBuilt = true;
+                InitializeInfo();
+                UpdateCanvas(currentType);
+                AddResources(allResources, mineResources);
+                mineTextBlock.Text = "*";
+                UpdateBuild();
+                Debug.WriteLine(buildState.ToString());
+            }
+
+            if (!BuildingsBuilt.mineBuilt)
+            {
+                if (allResources.Wood >= mineReqWood && allResources.Stone >= mineReqStone && buildMine.Progress == 0)
+                {
+                    if (buildMine.Progress == 0)
+                    {
+                        buildMine.RightVisible = false;
+                        buildMine.ButtonVisible = true;
+                    }
+                    else if (buildMine.Progress > 0)
+                    {
+                        buildMine.ProgressBarVisible = true;
+                        buildMine.ButtonVisible = false;
+                    }
+                }
+                else if (allResources.Stone < mineReqStone && buildMine.Progress == 0 || allResources.Wood < mineReqWood && buildMine.Progress == 0)
+                {
+                    buildMine.RightVisible = true;
+                    buildMine.ButtonVisible = false;
+                }
+            }
+            else
+            {
+                buildMine.RightContent = "Completed";
+                buildMine.RightVisible = true;
+                buildMine.ProgressBarVisible = false;
+                buildMine.ButtonVisible = false;
+                mineGrid.Visibility = Visibility.Visible;
+            }
+
+            if (buildState == 23)
+            {
+                allResources.Wood -= lumberReqWood;
+                allResources.Stone -= lumberReqStone;
+                InitializeInfo();
+                Debug.WriteLine(buildState.ToString());
+            }
+            else if (buildState == 24)
+            {
+                buildLumberHouse.RightVisible = true;
+                buildLumberHouse.ButtonVisible = false;
+                buildLumberHouse.ProgressBarVisible = false;
+                BuildingsBuilt.lumberBuilt = true;
+                InitializeInfo();
+                UpdateCanvas(currentType);
+                AddResources(allResources, lumberResources);
+                lumberTextBlock.Text = "*";
+                UpdateBuild();
+                Debug.WriteLine(buildState.ToString());
+            }
+
+            if (!BuildingsBuilt.lumberBuilt)
+            {
+                if (allResources.Wood >= lumberReqWood && allResources.Stone >= lumberReqStone && buildLumberHouse.Progress == 0)
+                {
+                    if (buildLumberHouse.Progress == 0)
+                    {
+                        buildLumberHouse.RightVisible = false;
+                        buildLumberHouse.ButtonVisible = true;
+                    }
+                    else if (buildLumberHouse.Progress > 0)
+                    {
+                        buildLumberHouse.ProgressBarVisible = true;
+                        buildLumberHouse.ButtonVisible = false;
+                    }
+                }
+                else if (allResources.Stone < lumberReqStone && buildLumberHouse.Progress == 0 || allResources.Wood < lumberReqWood && buildLumberHouse.Progress == 0)
+                {
+                    buildLumberHouse.RightVisible = true;
+                    buildLumberHouse.ButtonVisible = false;
+                }
+            }
+            else
+            {
+                buildLumberHouse.RightContent = "Completed";
+                buildLumberHouse.RightVisible = true;
+                buildLumberHouse.ProgressBarVisible = false;
+                buildLumberHouse.ButtonVisible = false;
+                lumberGrid.Visibility = Visibility.Visible;
+            }
+
+            if (buildState == 25)
+            {
+                allResources.Wood -= roadToVillageReqWood;
+                allResources.Stone -= roadToVillageReqStone;
+                InitializeInfo();
+                UpdateCanvas(currentType);
+                Debug.WriteLine(buildState.ToString());
+            }
+            else if (buildState == 26)
+            {
+                buildRoadToVillage.RightVisible = true;
+                buildRoadToVillage.ButtonVisible = false;
+                buildRoadToVillage.ProgressBarVisible = false;
+                BuildingsBuilt.mountainBuilt = true;
+                UpdateCanvas(currentType);
+                UpdateBuild();
+                Debug.WriteLine(buildState.ToString());
+            }
+
+            if (!BuildingsBuilt.villageBuilt)
+            {
+                if (allResources.Wood >= roadToVillageReqWood && allResources.Stone >= roadToVillageReqStone)
+                {
+                    if (buildRoadToVillage.Progress == 0)
+                    {
+                        buildRoadToVillage.RightVisible = false;
+                        buildRoadToVillage.ButtonVisible = true;
+                    }
+                    else if (buildRoadToVillage.Progress > 0)
+                    {
+                        buildRoadToVillage.ProgressBarVisible = true;
+                        buildRoadToVillage.ButtonVisible = false;
+                    }
+                }
+                else if (allResources.Wood < roadToVillageReqWood && buildRoadToVillage.Progress == 0 || allResources.Stone < roadToVillageReqStone && buildRoadToVillage.Progress == 0)
+                {
+                    buildRoadToVillage.ButtonVisible = false;
+                    buildRoadToVillage.RightVisible = true;
+                }
+            }
+            else
+            {
+                buildRoadToVillage.RightContent = "Completed";
+                buildRoadToVillage.RightVisible = true;
+                buildRoadToVillage.ProgressBarVisible = false;
+                buildRoadToVillage.ButtonVisible = false;
+            }
+
+            if (buildState == 27)
+            {
+                allResources.Wood -= tradeReqWood;
+                allResources.Stone -= tradeReqStone;
+                InitializeInfo();
+                Debug.WriteLine(buildState.ToString());
+            }
+            else if (buildState == 28)
+            {
+                buildTradingHouse.RightVisible = true;
+                buildTradingHouse.ButtonVisible = false;
+                buildTradingHouse.ProgressBarVisible = false;
+                BuildingsBuilt.tradeBuilt = true;
+                InitializeInfo();
+                UpdateCanvas(currentType);
+                AddResources(allResources, tradeResources);
+                tradingTextBlock.Text = "*";
+                UpdateBuild();
+                Debug.WriteLine(buildState.ToString());
+            }
+
+            if (!BuildingsBuilt.tradeBuilt)
+            {
+                if (allResources.Wood >= tradeReqWood && allResources.Stone >= tradeReqStone && buildTradingHouse.Progress == 0)
+                {
+                    if (buildTradingHouse.Progress == 0)
+                    {
+                        buildTradingHouse.RightVisible = false;
+                        buildTradingHouse.ButtonVisible = true;
+                    }
+                    else if (buildTradingHouse.Progress > 0)
+                    {
+                        buildTradingHouse.ProgressBarVisible = true;
+                        buildTradingHouse.ButtonVisible = false;
+                    }
+                }
+                else if (allResources.Stone < tradeReqStone && buildTradingHouse.Progress == 0 || allResources.Wood < tradeReqWood && buildTradingHouse.Progress == 0)
+                {
+                    buildTradingHouse.RightVisible = true;
+                    buildTradingHouse.ButtonVisible = false;
+                }
+            }
+            else
+            {
+                buildTradingHouse.RightContent = "Completed";
+                buildTradingHouse.RightVisible = true;
+                buildTradingHouse.ProgressBarVisible = false;
+                buildTradingHouse.ButtonVisible = false;
+                tradingGrid.Visibility = Visibility.Visible;
+            }
+
+            if (buildState == 29)
+            {
+                allResources.Wood -= tradeRouteReqWood;
+                allResources.Stone -= tradeRouteReqStone;
+                InitializeInfo();
+                UpdateCanvas(currentType);
+                Debug.WriteLine(buildState.ToString());
+            }
+            else if (buildState == 30)
+            {
+                buildTradeRoute.RightVisible = true;
+                buildTradeRoute.ButtonVisible = false;
+                buildTradeRoute.ProgressBarVisible = false;
+                BuildingsBuilt.tradeRouteBuilt = true;
+                UpdateCanvas(currentType);
+                UpdateBuild();
+                Debug.WriteLine(buildState.ToString());
+            }
+
+            if (!BuildingsBuilt.tradeRouteBuilt)
+            {
+                if (allResources.Wood >= tradeRouteReqWood && allResources.Stone >= tradeRouteReqStone)
+                {
+                    if (buildTradeRoute.Progress == 0)
+                    {
+                        buildTradeRoute.RightVisible = false;
+                        buildTradeRoute.ButtonVisible = true;
+                    }
+                    else if (buildTradeRoute.Progress > 0)
+                    {
+                        buildTradeRoute.ProgressBarVisible = true;
+                        buildTradeRoute.ButtonVisible = false;
+                    }
+                }
+                else if (allResources.Wood < tradeRouteReqWood && buildTradeRoute.Progress == 0 || allResources.Stone < tradeRouteReqStone && buildTradeRoute.Progress == 0)
+                {
+                    buildTradeRoute.ButtonVisible = false;
+                    buildTradeRoute.RightVisible = true;
+                }
+            }
+            else
+            {
+                buildTradeRoute.RightContent = "Completed";
+                buildTradeRoute.RightVisible = true;
+                buildTradeRoute.ProgressBarVisible = false;
+                buildTradeRoute.ButtonVisible = false;
+            }
+
+            if (buildState == 31)
+            {
+                allResources.Wood -= toolsReqWood;
+                allResources.Stone -= toolsReqStone;
+                InitializeInfo();
+                UpdateCanvas(currentType);
+                Debug.WriteLine(buildState.ToString());
+            }
+            else if (buildState == 32)
+            {
+                buildTools.ProgressBarVisible = false;
+                buildTools.RightContent = "[" + toolsReqWood + "w , " + toolsReqStone + "s]";
+                UpdateCanvas(currentType);
+                UpdateBuild();
+                Debug.WriteLine(buildState.ToString());
+            }
+
+            if (allResources.Wood >= toolsReqWood && allResources.Stone >= toolsReqStone)
+            {
+                if (buildTools.Progress == 0)
+                {
+                    buildTools.RightVisible = false;
+                    buildTools.ButtonVisible = true;
+                }
+                else if (buildTools.Progress > 0)
+                {
+                    buildTools.ProgressBarVisible = true;
+                    buildTools.ButtonVisible = false;
+                }
+            }
+            else if (allResources.Wood < toolsReqWood && buildTools.Progress == 0 || allResources.Stone < toolsReqStone && buildTools.Progress == 0)
+            {
+                buildTools.ButtonVisible = false;
+                buildTools.RightVisible = true;
+            }
+
+            if (buildState == 33)
+            {
+                allResources.Food -= exploreReqFood;
+                InitializeInfo();
+                UpdateCanvas(currentType);
+                Debug.WriteLine(buildState.ToString());
+            }
+            else if (buildState == 34)
+            {
+                buildExplore.ProgressBarVisible = false;
+                buildExplore.RightContent = "Complete!";
+                if (!BuildingsBuilt.villageBuilt)
+                {
+                    BuildingsBuilt.villageBuilt = true;
+                }
+                else
+                {
+                    int exp = rand.Next(1, 10 + 1);                   //10% chance to find the boooook~~~ :o it does nothing :I
+                    switch (exp)
+                    {
+                        case 1:
+                            BuildingsBuilt.bookFound = true;
+                            Debug.WriteLine("Book Found!");
+                            break;
+                        default:
+                            Debug.WriteLine("Nothing found!");
+                            break;
+                    }
+
+                }
+                UpdateCanvas(currentType);
+                UpdateBuild();
+                Debug.WriteLine(buildState.ToString());
+            }
+
+            if (allResources.Food >= exploreReqFood)
+            {
+                if (buildExplore.Progress == 0)
+                {
+                    buildExplore.RightVisible = false;
+                    buildExplore.ButtonVisible = true;
+                }
+                else if (buildExplore.Progress > 0)
+                {
+                    buildExplore.ProgressBarVisible = true;
+                    buildExplore.ButtonVisible = false;
+                }
+            }
+            else if (allResources.Food < exploreReqFood && buildExplore.Progress == 0)
+            {
+                buildExplore.ButtonVisible = false;
+                buildExplore.RightVisible = true;
+            }
+
+            if (buildState == 35)
+            {
+                InitializeInfo();
+                UpdateCanvas(currentType);
+                Debug.WriteLine(buildState.ToString());
+            }
+            else if (buildState == 36)
+            {
+                allResources.Food += 20;
+                doGather.ProgressBarVisible = false;
+                doGather.RightContent = "Complete!";
+                UpdateCanvas(currentType);
+                UpdateBuild();
+                Debug.WriteLine(buildState.ToString());
+            }
+            if (doGather.Progress != 0)
+            {
+                doGather.ProgressBarVisible = true;
+                doGather.ButtonVisible = false;
+            }
+            else
+            {
+                doGather.ButtonVisible = true;
+                doGather.ProgressBarVisible = false;
+            }
+
+            if (buildState == 37)
+            {
+                InitializeInfo();
+                UpdateCanvas(currentType);
+                Debug.WriteLine(buildState.ToString());
+            }
+            else if (buildState == 38)
+            {
+                allResources.Stone += 20;
+                doMine.ProgressBarVisible = false;
+                doMine.RightContent = "Complete!";
+                UpdateCanvas(currentType);
+                UpdateBuild();
+                Debug.WriteLine(buildState.ToString());
+            }
+            if (doMine.Progress != 0)
+            {
+                doMine.ProgressBarVisible = true;
+                doMine.ButtonVisible = false;
+            }
+            else
+            {
+                doMine.ButtonVisible = true;
+                doMine.ProgressBarVisible = false;
+            }
+
+            if (buildState == 39)
+            {
+                InitializeInfo();
+                UpdateCanvas(currentType);
+                Debug.WriteLine(buildState.ToString());
+            }
+            else if (buildState == 40)
+            {
+                allResources.Wood += 20;
+                doCut.ProgressBarVisible = false;
+                doCut.RightContent = "Complete!";
+                UpdateCanvas(currentType);
+                UpdateBuild();
+                Debug.WriteLine(buildState.ToString());
+            }
+            if (doCut.Progress != 0)
+            {
+                doCut.ProgressBarVisible = true;
+                doCut.ButtonVisible = false;
+            }
+            else
+            {
+                doCut.ButtonVisible = true;
+                doCut.ProgressBarVisible = false;
+            }
+
+
             if ((App.Current as App).BuildState != 0)
             {
                 (App.Current as App).BuildState = 0;
                 buildState = 0;
                 CheckBuildState();
             }
+            
+            UpdateBuild();
         }
 
-        private void InitializeInfo()
+        private void InitializeInfo() // This really just updates them, because InfoLines don't have really any content
         {
             resourceList.Clear();
+
+            HomeInfo.Clear();
+            YardInfo.Clear();
+            WorkshopInfo.Clear();
+            StorageInfo.Clear();
+            SiloInfo.Clear();
+            FarmInfo.Clear();
+            MineInfo.Clear();
+            LumberInfo.Clear();
+            TradingInfo.Clear();
+
+            InfoLine homeInfoTitle = new InfoLine { MiddleContent = "Home" };
+            InfoLine yardTitle = new InfoLine { MiddleContent = "Yard" };
+            InfoLine workshopTitle = new InfoLine { MiddleContent = "Workshop" };
+            InfoLine storageTitle = new InfoLine { MiddleContent = "Storage" };
+            InfoLine siloTitle = new InfoLine { MiddleContent = "Silo" };
+            InfoLine farmTitle = new InfoLine { MiddleContent = "Farm" };
+            InfoLine mineTitle = new InfoLine { MiddleContent = "Mine" };
+            InfoLine lumberTitle = new InfoLine { MiddleContent = "Lumber House" };
+            InfoLine tradeTitle = new InfoLine { MiddleContent = "Trade" };
+
             //initializing InfoLines for resources
             resourcesTitle = new InfoLine { MiddleContent = "Resources" };
             food = new InfoLine { LeftContent = "Food", RightContent = allResources.Food.ToString() + "(" + allResources.maxFood.ToString() + ")" };
             stone = new InfoLine { LeftContent = "Stone", RightContent = allResources.Stone.ToString() + "(" + allResources.maxStone.ToString() + ")" };
             wood = new InfoLine { LeftContent = "Wood", RightContent = allResources.Wood.ToString() + "(" + allResources.maxWood.ToString() + ")" };
-
             resourceList.Add(resourcesTitle);
             resourceList.Add(food);
             resourceList.Add(wood);
             resourceList.Add(stone);
 
             //Adding resourcesList to HomeInfo
-            HomeInfo.Clear();
-            YardInfo.Clear();
-            InfoLine homeInfoTitle = new InfoLine { MiddleContent = "Home" };
-            InfoLine yardTitle = new InfoLine { MiddleContent = "Yard" };
-            InfoLine workshopTitle = new InfoLine { MiddleContent = "Workshop" };
-            InfoLine farmTitle = new InfoLine { MiddleContent = "Farm" };
-            InfoLine mineTitle = new InfoLine { MiddleContent = "Mine" };
-            InfoLine lumberTitle = new InfoLine { MiddleContent = "Lumber House" };
-
             HomeInfo.Add(homeInfoTitle);
             YardInfo.Add(yardTitle);
+            WorkshopInfo.Add(workshopTitle);
+            StorageInfo.Add(storageTitle);
+            SiloInfo.Add(siloTitle);
+            FarmInfo.Add(farmTitle);
+            MineInfo.Add(mineTitle);
+            LumberInfo.Add(lumberTitle);
+            TradingInfo.Add(tradeTitle);
 
             foreach (InfoLine line in resourceList)
             {
                 HomeInfo.Add(line);
                 YardInfo.Add(line);
+                SiloInfo.Add(line);
+                StorageInfo.Add(line);
             }
-            InfoLine availableTitle = new InfoLine { MiddleContent = "Available" };
-            InfoLine yardAvailable = new InfoLine { LeftContent = "Yard", RightContent = "Available" };
-            HomeInfo.Add(availableTitle);
-            HomeInfo.Add(yardAvailable);
+            FarmInfo.Add(food);
+            LumberInfo.Add(wood);
+            MineInfo.Add(stone);
+
         }
 
-        private void InitializeBuild()
+        private void InitializeBuild() // Build Lines are initializes here...
         {
             buildYard = new BuildLine { LeftContent = "Yard", ButtonContent = "[" + yardReqWood + "w , " + yardReqStone + "s]", RightContent = "[" + yardReqWood + "w , " + yardReqStone + "s]", ProgressSpeed = 50 };
             buildWorkshop = new BuildLine { LeftContent = "Workshop", ButtonContent = "[" + workReqWood + "w , " + workReqStone + "s]", RightContent = "[" + workReqWood + "w , " + workReqStone + "s]", ProgressSpeed = 55 };
@@ -683,6 +1316,10 @@ namespace tehRojekti
             buildTradeRoute = new BuildLine { LeftContent = "Trade Route", ButtonContent = "[" + tradeRouteReqWood + "w , " + tradeRouteReqStone + "s]", RightContent = "[" + tradeRouteReqWood + "w , " + tradeRouteReqStone + "s]", ProgressSpeed = 50 };
             buildTools = new BuildLine { LeftContent = "Tools", ButtonContent = "[" + toolsReqWood + "w , " + toolsReqStone + "s]", RightContent = "[" + toolsReqWood + "w , " + toolsReqStone + "s]", ProgressSpeed = 50 };
             buildExplore = new BuildLine { LeftContent = "Explore World", ButtonContent = "Explore", RightContent = "Explore", ProgressSpeed = 50 };
+            doGather = new BuildLine { LeftContent = "Gather Food", ButtonContent = "Gather", RightContent = "Gather", Progress = 50 };
+            doMine = new BuildLine { LeftContent = "Mine Stone", ButtonContent = "Mine", RightContent = "Mine", ProgressSpeed = 50 };
+            doCut = new BuildLine { LeftContent = "Cut Wood", ButtonContent = "Cut", RightContent = "Cut", ProgressSpeed = 50 };
+            // Add buildlines with buttons here~ without buttons below, so its easier to code functions for them in CheckBuildState
 
             homeBuildTitle = new BuildLine { MiddleContent = "Home" };
             yardTitle = new BuildLine { MiddleContent = "Yard" };
@@ -706,8 +1343,7 @@ namespace tehRojekti
 
 
             HomeBuild.Add(homeBuildTitle);
-            HomeBuild.Add(blankBuild);
-            HomeBuild.Add(availableBuild);
+            HomeBuild.Add(availableBuild);                                        // If building is available, add it to canvas
             if (!BuildingsBuilt.yardBuilt)
             {
                 HomeBuild.Add(buildYard);
@@ -721,7 +1357,7 @@ namespace tehRojekti
                 HomeBuild.Add(buildStorageRoom);
             }
             HomeBuild.Add(blankBuild);
-            HomeBuild.Add(completedBuild);
+            HomeBuild.Add(completedBuild);                                          // If building is completed, add it to canvas     these apply all buildings below
             if (BuildingsBuilt.yardBuilt)
             {
                 HomeBuild.Add(buildYard);
@@ -736,7 +1372,7 @@ namespace tehRojekti
             }
 
             YardBuild.Add(yardTitle);
-            YardBuild.Add(blankBuild);
+            YardBuild.Add(buildExplore);
             YardBuild.Add(availableBuild);
             if (!BuildingsBuilt.workshopBuilt)
             {
@@ -815,10 +1451,6 @@ namespace tehRojekti
             {
                 YardBuild.Add(buildLumberHouse);
             }
-            if (BuildingsBuilt.lumberBuilt)
-            {
-                YardBuild.Add(buildLumberHouse);
-            }
             if (BuildingsBuilt.siloBuilt)
             {
                 YardBuild.Add(buildSilo);
@@ -837,12 +1469,22 @@ namespace tehRojekti
             }
 
             WorkshopBuild.Add(workshopTitle);
-            WorkshopBuild.Add(blankBuild);
             WorkshopBuild.Add(availableBuild);
             WorkshopBuild.Add(buildTools);
+            WorkshopBuild.Add(blankBuild);
+            WorkshopBuild.Add(completedBuild);
+
+            FarmBuild.Add(farmTitle);
+            FarmBuild.Add(doGather);
+
+            MineBuild.Add(mineTitle);
+            MineBuild.Add(doMine);
+
+            LumberBuild.Add(lumberTitle);
+            LumberBuild.Add(doCut);
         }
 
-        private void InitializeResources()
+        private void InitializeResources()          // Default resource stuffs goes here...
         {
             allResources.Building = 0;
             allResources.maxFood = 5;
@@ -946,8 +1588,9 @@ namespace tehRojekti
         public void UpdateCanvas(bool type)
         {
             SideCanvas.Children.Clear();
+            SideCanvas.Height = 0;
             linePos = 0;
-            //Adding current info to canvas, and updating them
+            //Adding current info to side canvas, and updating them
             if (type) // True = Info / False = Build
             {
                 foreach (InfoLine line in currentInfo)
@@ -955,15 +1598,18 @@ namespace tehRojekti
                     if (line.MiddleContent == "")
                     {
                         line.LocationY = 30 * linePos;
+                        linePos++;
+                        SideCanvas.Height = linePos * 30;
                     }
                     else
                     {
                         line.LocationY = 28 * linePos;
+                        linePos++;
+                        SideCanvas.Height = linePos * 28;
                     }
                     line.UpdateInfo();
                     SideCanvas.Children.Add(line);
-                    linePos++;
-                    if(linePos > 15)
+                    if (linePos > 15)  // if over 15 items, show scroll bar
                     {
                         CanvasScroller.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
                     }
@@ -980,18 +1626,20 @@ namespace tehRojekti
                     if (line.MiddleContent == "")
                     {
                         line.LocationY = 30 * linePos;
+                        linePos++;
+                        SideCanvas.Height = linePos * 30;
                     }
                     else
                     {
                         line.LocationY = 28 * linePos;
                         line.ProgressBarVisible = false;
                         line.RightVisible = true;
+                        linePos++;
+                        SideCanvas.Height = linePos * 28;
                     }
                     line.UpdateInfo();
-                    
                     SideCanvas.Children.Add(line);
-                    linePos++;
-                    if (linePos > 15)
+                    if (linePos > 15)  // if over 15 items, show scroll bar
                     {
                         CanvasScroller.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
                     }
@@ -1003,9 +1651,19 @@ namespace tehRojekti
             }
         }
 
-        private async void MenuButton_Click(object sender, RoutedEventArgs e)
+        private void MenuButton_Click(object sender, RoutedEventArgs e)
         {
-            timer.Stop();
+            timer.Stop();  // Stops timer, saves stuffs, not building progresses and goes to menu
+
+            WriteSave();
+
+            Frame rootFrame = Window.Current.Content as Frame;
+            if (rootFrame == null) return;
+            if (rootFrame.CanGoBack) rootFrame.GoBack();
+        }
+
+        public async void WriteSave()
+        {
             try
             {
                 listResources = new List<ResourcesClass>();
@@ -1038,11 +1696,9 @@ namespace tehRojekti
             {
                 Debug.WriteLine("Error occured: " + ex.Message);
             }
-            Frame rootFrame = Window.Current.Content as Frame;
-            if (rootFrame == null) return;
-            if (rootFrame.CanGoBack) rootFrame.GoBack();
         }
 
+        // These buttons change current type of infostuff into its own and updates side canvas
         private void BuildButton_Click(object sender, RoutedEventArgs e)
         {
             currentType = false;
@@ -1057,6 +1713,7 @@ namespace tehRojekti
             UpdateCanvas(currentType);
         }
 
+        //Grids are all pretty much the same. when tapped, changes current info stuffs to its own and clears any possible notificators from grids textblock
         private void homeGrid_Tapped(object sender, TappedRoutedEventArgs e)
         {
             if(currentInfo != HomeInfo)
