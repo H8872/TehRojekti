@@ -1165,15 +1165,15 @@ namespace tehRojekti
                 UpdateBuild();
                 Debug.WriteLine(buildState.ToString());
             }
-            if (doGather.Progress != 0)
+            if (doGather.Progress == 0)
             {
-                doGather.ProgressBarVisible = true;
-                doGather.ButtonVisible = false;
+                doGather.ProgressBarVisible = false;
+                doGather.ButtonVisible = true;
             }
             else
             {
-                doGather.ButtonVisible = true;
-                doGather.ProgressBarVisible = false;
+                doGather.ButtonVisible = false;
+                doGather.ProgressBarVisible = true;
             }
 
             if (buildState == 37)
@@ -1217,15 +1217,15 @@ namespace tehRojekti
                 UpdateBuild();
                 Debug.WriteLine(buildState.ToString());
             }
-            if (doCut.Progress != 0)
+            if (doCut.Progress == 0)
             {
-                doCut.ProgressBarVisible = true;
-                doCut.ButtonVisible = false;
+                doCut.ProgressBarVisible = false;
+                doCut.ButtonVisible = true;
             }
             else
             {
-                doCut.ButtonVisible = true;
-                doCut.ProgressBarVisible = false;
+                doCut.ButtonVisible = false;
+                doCut.ProgressBarVisible = true;
             }
 
 
@@ -1340,6 +1340,9 @@ namespace tehRojekti
             HomeBuild.Clear();
             YardBuild.Clear();
             WorkshopBuild.Clear();
+            FarmBuild.Clear();
+            MineBuild.Clear();
+            LumberBuild.Clear();
 
 
             HomeBuild.Add(homeBuildTitle);
