@@ -137,6 +137,9 @@ namespace tehRojekti
         BuildLine buildTradeRoute; // 29 30
         BuildLine buildTools; // 31 32
         BuildLine buildExplore; // 33 34
+        BuildLine doGather; // 35 36
+        BuildLine doMine; // 37 38
+        BuildLine doCut; // 39 40
 
         BuildLine homeBuildTitle;
         BuildLine yardTitle;
@@ -299,12 +302,12 @@ namespace tehRojekti
             /* Build states: (used below)
             1 = building yard                   17 = building silo                  33 = building actually just exploring
             2 = yard complete                   18 = silo complete                  34 = exploring complete
-            3 = building workshop               19 = building farm                  35 = 
-            4 = workshop complete               20 = farm complete                  36 = 
-            5 = building storage                21 = building mine                  37 = 
-            6 = storage complete                22 = mine complete                  38 = 
-            7 = building kitchen                23 = building lumber house          39 =
-            8 = kitchen complete                24 = lumber house complete          40 =
+            3 = building workshop               19 = building farm                  35 = Gather Food
+            4 = workshop complete               20 = farm complete                  36 = Gathering complete
+            5 = building storage                21 = building mine                  37 = mine stone
+            6 = storage complete                22 = mine complete                  38 = mining complete
+            7 = building kitchen                23 = building lumber house          39 = cutting wood
+            8 = kitchen complete                24 = lumber house complete          40 = cutting complete
             9 = building road to plains         25 = building road to village       41 = building
             10 = road to plains complete        26 = road to village complete       42 =  complete
             11 = building road to mountain      27 = building Trading House             ^thats how stuff continues^
@@ -1110,7 +1113,7 @@ namespace tehRojekti
                 }
                 else
                 {
-                    int exp = rand.Next(1, 10 + 1);                   //10% chance to find the boooook~~~ :o
+                    int exp = rand.Next(1, 10 + 1);                   //10% chance to find the boooook~~~ :o it does nothing :I
                     switch (exp)
                     {
                         case 1:
@@ -1145,6 +1148,84 @@ namespace tehRojekti
             {
                 buildExplore.ButtonVisible = false;
                 buildExplore.RightVisible = true;
+            }
+
+            if (buildState == 35)
+            {
+                InitializeInfo();
+                UpdateCanvas(currentType);
+                Debug.WriteLine(buildState.ToString());
+            }
+            else if (buildState == 36)
+            {
+                allResources.Food += 20;
+                doGather.ProgressBarVisible = false;
+                doGather.RightContent = "Complete!";
+                UpdateCanvas(currentType);
+                UpdateBuild();
+                Debug.WriteLine(buildState.ToString());
+            }
+            if (doGather.Progress != 0)
+            {
+                doGather.ProgressBarVisible = true;
+                doGather.ButtonVisible = false;
+            }
+            else
+            {
+                doGather.ButtonVisible = true;
+                doGather.ProgressBarVisible = false;
+            }
+
+            if (buildState == 37)
+            {
+                InitializeInfo();
+                UpdateCanvas(currentType);
+                Debug.WriteLine(buildState.ToString());
+            }
+            else if (buildState == 38)
+            {
+                allResources.Stone += 20;
+                doMine.ProgressBarVisible = false;
+                doMine.RightContent = "Complete!";
+                UpdateCanvas(currentType);
+                UpdateBuild();
+                Debug.WriteLine(buildState.ToString());
+            }
+            if (doMine.Progress != 0)
+            {
+                doMine.ProgressBarVisible = true;
+                doMine.ButtonVisible = false;
+            }
+            else
+            {
+                doMine.ButtonVisible = true;
+                doMine.ProgressBarVisible = false;
+            }
+
+            if (buildState == 39)
+            {
+                InitializeInfo();
+                UpdateCanvas(currentType);
+                Debug.WriteLine(buildState.ToString());
+            }
+            else if (buildState == 40)
+            {
+                allResources.Wood += 20;
+                doCut.ProgressBarVisible = false;
+                doCut.RightContent = "Complete!";
+                UpdateCanvas(currentType);
+                UpdateBuild();
+                Debug.WriteLine(buildState.ToString());
+            }
+            if (doCut.Progress != 0)
+            {
+                doCut.ProgressBarVisible = true;
+                doCut.ButtonVisible = false;
+            }
+            else
+            {
+                doCut.ButtonVisible = true;
+                doCut.ProgressBarVisible = false;
             }
 
 
@@ -1235,6 +1316,9 @@ namespace tehRojekti
             buildTradeRoute = new BuildLine { LeftContent = "Trade Route", ButtonContent = "[" + tradeRouteReqWood + "w , " + tradeRouteReqStone + "s]", RightContent = "[" + tradeRouteReqWood + "w , " + tradeRouteReqStone + "s]", ProgressSpeed = 50 };
             buildTools = new BuildLine { LeftContent = "Tools", ButtonContent = "[" + toolsReqWood + "w , " + toolsReqStone + "s]", RightContent = "[" + toolsReqWood + "w , " + toolsReqStone + "s]", ProgressSpeed = 50 };
             buildExplore = new BuildLine { LeftContent = "Explore World", ButtonContent = "Explore", RightContent = "Explore", ProgressSpeed = 50 };
+            doGather = new BuildLine { LeftContent = "Gather Food", ButtonContent = "Gather", RightContent = "Gather", Progress = 50 };
+            doMine = new BuildLine { LeftContent = "Mine Stone", ButtonContent = "Mine", RightContent = "Mine", ProgressSpeed = 50 };
+            doCut = new BuildLine { LeftContent = "Cut Wood", ButtonContent = "Cut", RightContent = "Cut", ProgressSpeed = 50 };
             // Add buildlines with buttons here~ without buttons below, so its easier to code functions for them in CheckBuildState
 
             homeBuildTitle = new BuildLine { MiddleContent = "Home" };
@@ -1389,6 +1473,15 @@ namespace tehRojekti
             WorkshopBuild.Add(buildTools);
             WorkshopBuild.Add(blankBuild);
             WorkshopBuild.Add(completedBuild);
+
+            FarmBuild.Add(farmTitle);
+            FarmBuild.Add(doGather);
+
+            MineBuild.Add(mineTitle);
+            MineBuild.Add(doMine);
+
+            LumberBuild.Add(lumberTitle);
+            LumberBuild.Add(doCut);
         }
 
         private void InitializeResources()          // Default resource stuffs goes here...
