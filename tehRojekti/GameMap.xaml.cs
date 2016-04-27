@@ -988,8 +988,17 @@ namespace tehRojekti
                         line.RightVisible = true;
                     }
                     line.UpdateInfo();
+                    
                     SideCanvas.Children.Add(line);
                     linePos++;
+                    if (linePos > 15)
+                    {
+                        CanvasScroller.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
+                    }
+                    else
+                    {
+                        CanvasScroller.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
+                    }
                 }
             }
         }
